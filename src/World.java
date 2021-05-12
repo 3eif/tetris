@@ -14,15 +14,30 @@ public abstract class World extends Pane {
 
     public World() {
         timer = new AnimationTimer() {
+            long prev = 0;
             @Override
-            public void handle(long l) {
+            public void handle(long now) {
                 act();
 
                 ObservableList<Node> children = getChildren();
-                for(int i = 0; i < children.size(); i++) {
-                    if(children.get(i) instanceof Actor) {
-                        Actor a = (Actor)(children.get(i));
+                for (int i = 0; i < children.size(); i++) {
+                    if (children.get(i) instanceof Tetrimino) {
+                        Tetrimino t = (Tetrimino) (children.get(i));
+                        if(t.isMovable()) t.act();
+                    } else if (children.get(i) instanceof Actor) {
+                        Actor a = (Actor) (children.get(i));
                         a.act();
+                    }
+                }
+
+                if (now - prev > (1e6 * 500)) {
+                    prev = now;
+
+                    for (int i = 0; i < children.size(); i++) {
+                        if (children.get(i) instanceof Tetrimino) {
+                            Tetrimino t = (Tetrimino) (children.get(i));
+                            if(t.isMovable()) t.delayedAct();
+                        }
                     }
                 }
             }

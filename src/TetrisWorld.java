@@ -1,8 +1,9 @@
 public class TetrisWorld extends World {
-    private double tickSpeed;
+    private int tileSize;
+    private boolean shouldRotate;
 
-    public TetrisWorld(double tickSpeed) {
-        this.tickSpeed = tickSpeed;
+    public TetrisWorld(int tileSize) {
+        this.tileSize = tileSize;
     }
 
     @Override
@@ -10,11 +11,27 @@ public class TetrisWorld extends World {
 
     }
 
-    public double getTickSpeed() {
-        return tickSpeed;
+    public void spawnNextTetrimino() {
+        Tetrimino tetrimino = new LTetrimino(getTileSize());
+        tetrimino.setY(0);
+        tetrimino.setX(0);
+        add(tetrimino);
+        tetrimino.addTiles();
     }
 
-    public void setTickSpeed(double tickSpeed) {
-        this.tickSpeed = tickSpeed;
+    public int getTileSize() {
+        return tileSize;
+    }
+
+    public void setTileSize(int tileSize) {
+        this.tileSize = tileSize;
+    }
+
+    public boolean getShouldRotate() {
+        return shouldRotate;
+    }
+
+    public void setShouldRotate(boolean shouldRotate) {
+        this.shouldRotate = shouldRotate;
     }
 }
