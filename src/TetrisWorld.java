@@ -12,7 +12,10 @@ public class TetrisWorld extends World {
     }
 
     public void spawnNextTetrimino() {
-        Tetrimino tetrimino = new LTetrimino(getTileSize());
+//        Class[] tetriminoShapes = {ITetrimino.class, JTetrimino.class, LTetrimino.class, OTetrimino.class,
+//                TTetrimino.class, ZTetrminio.class};
+//        Class tetriminoShape = tetriminoShapes[(int)(Math.random() * tetriminoShapes.length)];
+        Tetrimino tetrimino = new LTetrimino(tileSize);
         tetrimino.setY(0);
         tetrimino.setX(0);
         add(tetrimino);

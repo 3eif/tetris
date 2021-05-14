@@ -23,7 +23,7 @@ public class Tetris extends Application {
         tetrisWorld.setMinHeight(scene.getHeight());
         tetrisWorld.setMinWidth(scene.getWidth());
 
-        String matrixTileImagePath = getClass().getClassLoader().getResource("./resources/black-tile2.png").toString();
+        String matrixTileImagePath = getClass().getClassLoader().getResource("black-tile.png").toString();
         Image matrixTileImage = new Image(matrixTileImagePath);
 
         Tile[][] matrix = new Tile[21][10];

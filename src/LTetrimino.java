@@ -1,5 +1,3 @@
-import javafx.scene.image.Image;
-
 public class LTetrimino extends Tetrimino {
     private static final int[][] shape = {
             {1, 1, 1},
