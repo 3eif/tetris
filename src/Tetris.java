@@ -45,6 +45,10 @@ public class Tetris extends Application {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if(keyEvent.getCode() == KeyCode.UP && !tetrisWorld.isKeyDown(KeyCode.UP)) tetrisWorld.setShouldRotate(true);
+                if((keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.RIGHT) &&
+                        (!tetrisWorld.isKeyDown(KeyCode.RIGHT) || !tetrisWorld.isKeyDown(KeyCode.LEFT))) {
+                    tetrisWorld.setShouldMoveToNextTile(true);
+                }
                 tetrisWorld.addKeyCode(keyEvent.getCode());
             }
         });
@@ -63,10 +67,6 @@ public class Tetris extends Application {
         stage.show();
         tetrisWorld.requestFocus();
 
-        Tetrimino tetrimino = new LTetrimino(tetrisWorld.getTileSize());
-        tetrimino.setY(0);
-        tetrimino.setX(0);
-        tetrisWorld.add(tetrimino);
-        tetrimino.addTiles();
+        tetrisWorld.spawnTetrimino();
     }
 }
