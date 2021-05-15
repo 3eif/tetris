@@ -25,9 +25,9 @@ public class TetrisWorld extends World {
             actor = (Actor) tetriminoShape.getDeclaredConstructor(int.class).newInstance(tileSize);
             Tetrimino tetrimino = (Tetrimino) actor;
             actor.setY(0);
-            int x = (int)((getWidth() / 2) - (int)(tetrimino.getMaxWidth() / 2));
-            System.out.println(x);
-            actor.setX(x % 5 == 0 ? x : x - (int)(tileSize / 2));
+            int x = (int)(getWidth() / 2) - (tetrimino.getMaxWidth() / 2);
+            if((x / 2) % 10 != 0) x -= tileSize / 2;
+            actor.setX(x);
             add(actor);
             tetrimino.addTiles();
         } catch(NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
