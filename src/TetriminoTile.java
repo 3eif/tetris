@@ -34,6 +34,8 @@ public class TetriminoTile extends Tile {
             parentTetrimino.setIsMovable(false);
             tetrisWorld.spawnTetrimino();
         }
+
+
     }
 
     public Tetrimino getParentTetrimino() {

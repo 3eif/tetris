@@ -19,28 +19,12 @@ public class Tetris extends Application {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 300, 600);
 
-        TetrisWorld tetrisWorld = new TetrisWorld(30);
-        tetrisWorld.setMinHeight(scene.getHeight());
-        tetrisWorld.setMinWidth(scene.getWidth());
-
         String matrixTileImagePath = getClass().getClassLoader().getResource("black-tile.png").toString();
         Image matrixTileImage = new Image(matrixTileImagePath);
 
-        Tile[][] matrix = new Tile[21][10];
-        for(int r = 0; r < matrix.length; r++) {
-            for(int c = 0; c < matrix[r].length; c++) {
-                Tile tile;
-                if(r == matrix.length - 1) tile = new BottomTile(matrixTileImage);
-                else tile = new Tile(matrixTileImage);
-                tile.setFitHeight(tetrisWorld.getTileSize());
-                tile.setFitWidth(tetrisWorld.getTileSize());
-                tile.setX(c * tile.getWidth());
-                tile.setY(r * tile.getHeight());
-                tetrisWorld.add(tile);
-                matrix[r][c] = tile;
-            }
-        }
-
+        TetrisWorld tetrisWorld = new TetrisWorld(30, matrixTileImage);
+        tetrisWorld.setMinHeight(scene.getHeight());
+        tetrisWorld.setMinWidth(scene.getWidth());
         tetrisWorld.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -52,14 +36,12 @@ public class Tetris extends Application {
                 tetrisWorld.addKeyCode(keyEvent.getCode());
             }
         });
-
         tetrisWorld.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 tetrisWorld.removeKeyCode(keyEvent.getCode());
             }
         });
-
         tetrisWorld.start();
 
         root.setCenter(tetrisWorld);

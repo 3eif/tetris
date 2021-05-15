@@ -32,6 +32,7 @@ public abstract class World extends Pane {
 
                 if (now - prev > (1e6 * 500)) {
                     prev = now;
+                    delayedAct();
 
                     for (int i = 0; i < children.size(); i++) {
                         if (children.get(i) instanceof Tetrimino) {
@@ -57,6 +58,7 @@ public abstract class World extends Pane {
     }
 
     public abstract void act();
+    public abstract void delayedAct();
 
     public void add(Actor actor) {
         getChildren().add(actor);

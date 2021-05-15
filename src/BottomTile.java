@@ -1,6 +1,6 @@
 import javafx.scene.image.Image;
 
-public class BottomTile extends Tile {
+public class BottomTile extends MatrixTile {
     public BottomTile(Image image) {
         super(image);
     }
