@@ -10,19 +10,19 @@ public class TetriminoTile extends Tile {
         parentTetrimino = tetrimino;
     }
 
-//    @Override
-//    public <A extends Actor> A getOneIntersectingObject(java.lang.Class<A> cls) {
-//        A intersectingObject = null;
-//        ObservableList<Node> actors = getParent().getChildrenUnmodifiable();
-//        for(int i = 0; i < actors.size(); i++) {
-//            if(actors.get(i) != this && cls.isInstance(actors.get(i)) && (actors.get(i).contains(getX() + (getWidth() / 2), getY()) ||
-//                    actors.get(i).contains(getX() + (getWidth() / 2), getY() - getHeight()))) {
-//                intersectingObject = (A) actors.get(i);
-//                break;
-//            }
-//        }
-//        return intersectingObject;
-//    }
+    @Override
+    public <A extends Actor> A getOneIntersectingObject(java.lang.Class<A> cls) {
+        A intersectingObject = null;
+        ObservableList<Node> actors = getParent().getChildrenUnmodifiable();
+        for(int i = 0; i < actors.size(); i++) {
+            if(actors.get(i) != this && cls.isInstance(actors.get(i)) && (actors.get(i).contains(getX() + (getWidth() / 2), getY()) ||
+                    actors.get(i).contains(getX() + (getWidth() / 2), getY() + getHeight()))) {
+                intersectingObject = (A) actors.get(i);
+                break;
+            }
+        }
+        return intersectingObject;
+    }
 
     @Override
     public void act() {

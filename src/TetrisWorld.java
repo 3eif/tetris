@@ -15,7 +15,7 @@ public class TetrisWorld extends World {
     }
 
     public void spawnTetrimino() {
-        Class[] tetriminoShapes = {ITetrimino.class, JTetrimino.class, LTetrimino.class, OTetrimino.class,
+        Class[] tetriminoShapes = {ITetrimino.class, JTetrimino.class, LTetrimino.class, OTetrimino.class, STetrimino.class,
                 TTetrimino.class, ZTetrminio.class};
         Class tetriminoShape = tetriminoShapes[(int)(Math.random() * tetriminoShapes.length)];
 
@@ -23,10 +23,12 @@ public class TetrisWorld extends World {
 
         try {
             actor = (Actor) tetriminoShape.getDeclaredConstructor(int.class).newInstance(tileSize);
-            actor.setY(0);
-            actor.setX(0);
-            add(actor);
             Tetrimino tetrimino = (Tetrimino) actor;
+            actor.setY(0);
+            int x = (int)((getWidth() / 2) - (int)(tetrimino.getMaxWidth() / 2));
+            System.out.println(x);
+            actor.setX(x % 5 == 0 ? x : x - (int)(tileSize / 2));
+            add(actor);
             tetrimino.addTiles();
         } catch(NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             System.out.println(e);
