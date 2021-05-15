@@ -38,9 +38,9 @@ public class TetrisWorld extends World {
     }
 
     public void delayedAct() {
-        ArrayList<Double> colYs = new ArrayList<Double>();
+        ArrayList<Double> rowYs = new ArrayList<Double>();
         for(int r = 0; r < matrix.length; r++) {
-            // First check if a column is filled with tetrimino tiles
+            // First check if a row is filled with tetrimino tiles
             boolean isColFilled = true;
             for(int c = 0; c < matrix[r].length; c++) {
                 MatrixTile tile = matrix[r][c];
@@ -50,25 +50,25 @@ public class TetrisWorld extends World {
                 }
             }
 
-            // If it is filled then remove the column
+            // If it is filled then remove the row
             if(isColFilled) {
                 for(int c = 0; c < matrix[r].length; c++) {
                     MatrixTile tile = matrix[r][c];
                     getChildren().remove(tile.getTetrminoTileAbove());
                 }
-                colYs.add(matrix[r][0].getY());
+                rowYs.add(matrix[r][0].getY());
             }
         }
 
-        // Drop the columns down if any column has been removed from the bottom
-        if(colYs.size() > 0) {
+        // Drop the rows down if any row has been removed from the bottom
+        if(rowYs.size() > 0) {
             ObservableList<Node> actors = getChildrenUnmodifiable();
             for(Node actor : actors) {
                 if(actor instanceof TetriminoTile) {
                     TetriminoTile tetriminoTile = (TetriminoTile) actor;
                     Tetrimino tetrimino = tetriminoTile.getParentTetrimino();
-                    if (!tetrimino.isMovable() && tetriminoTile.getY() < colYs.get(colYs.size() - 1) - (int)(tileSize / 2)) {
-                        tetriminoTile.setY(tetriminoTile.getY() + tileSize * colYs.size());
+                    if (!tetrimino.isMovable() && tetriminoTile.getY() < rowYs.get(rowYs.size() - 1) - (int)(tileSize / 2)) {
+                        tetriminoTile.setY(tetriminoTile.getY() + tileSize * rowYs.size());
                     }
                 }
             }
