@@ -22,7 +22,10 @@ public abstract class Tetrimino extends Actor {
         this.tileSize = tileSize;
 
         tiles = new TetriminoTile[shape.length][shape[0].length];
+        setDimensions();
+    }
 
+    private void setDimensions() {
         for (int r = 0; r < shape.length; r++) {
             int width = 0;
             int height = 0;
@@ -94,7 +97,7 @@ public abstract class Tetrimino extends Actor {
     public void rotate() {
         TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
 
-        TetriminoTile[][] newTiles = new TetriminoTile[tiles.length][tiles.length];
+        TetriminoTile[][] newTiles = new TetriminoTile[tiles.length][tiles[0].length];
         for (int r = 0; r < tiles.length; r++) {
             for (int c = 0; c < tiles[r].length; c++) {
                 if (tiles[r][c] != null) {
@@ -107,6 +110,10 @@ public abstract class Tetrimino extends Actor {
         }
         tiles = newTiles;
         tetrisWorld.setShouldRotate(false);
+
+        int temp = maxWidth;
+        maxWidth = maxHeight;
+        maxHeight = temp;
     }
 
     public void delayedAct() {
@@ -115,8 +122,31 @@ public abstract class Tetrimino extends Actor {
         }
     }
 
+    public void setXPos(double v) {
+        setX(v);
+        for (int r = 0; r < tiles.length; r++) {
+            for (int c = 0; c < tiles[r].length; c++) {
+                TetriminoTile tile = tiles[r][c];
+                if (tile != null) {
+                    tile.setX(v + c * tile.getWidth());
+                }
+            }
+        }
+    }
+
+    public void setYPos(double v) {
+        setY(v);
+        for (int r = 0; r < tiles.length; r++) {
+            for (int c = 0; c < tiles[r].length; c++) {
+                TetriminoTile tile = tiles[r][c];
+                if (tile != null) {
+                    tile.setY(v + r * tile.getHeight());
+                }
+            }
+        }
+    }
+
     public void moveVertical(double v) {
-        TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
         setY(getY() + v);
         for (int r = 0; r < tiles.length; r++) {
             for (int c = 0; c < tiles[r].length; c++) {

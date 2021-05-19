@@ -37,6 +37,7 @@ public class Tetris extends Application {
                         (!tetrisWorld.isKeyDown(KeyCode.RIGHT) || !tetrisWorld.isKeyDown(KeyCode.LEFT))) {
                     tetrisWorld.setShouldMoveToNextTile(true);
                 }
+                if(keyEvent.getCode() == KeyCode.C && !tetrisWorld.isKeyDown(KeyCode.C)) tetrisWorld.setShouldHold(true);
                 tetrisWorld.addKeyCode(keyEvent.getCode());
             }
         });

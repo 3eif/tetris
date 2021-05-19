@@ -1,6 +1,9 @@
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -10,25 +13,72 @@ public class TetrisWorld extends World {
 
     private boolean shouldRotate;
     private boolean shouldMoveToNextTile;
+    private boolean shouldHold;
+    private boolean canHold;
 
     private Matrix matrix;
     private Score score;
+    private Tetrimino holdTetrimino;
+    private ArrayList<Tetrimino> nextTetriminos = new ArrayList<Tetrimino>(3);
 
     public TetrisWorld(int tileSize, Image matrixTileImage, double sceneWidth, double sceneHeight) {
         this.tileSize = tileSize;
+        holdTetrimino = null;
 
-        matrix = new Matrix(21, 10, tileSize, (int)(sceneWidth / 2) - (int)((getTileSize() * 10) / 2), 0, matrixTileImage);
+        Text hold = new Text("Hold");
+        hold.setFont(new Font(30));
+        hold.setX(25);
+        hold.setY(150);
+
+        matrix = new Matrix(20, 10, tileSize, (int)(sceneWidth / 2) - (int)((getTileSize() * 10) / 2), 0, matrixTileImage);
         matrix.addMatrixToWorld(this);
 
         score = new Score();
         score.setX(25);
         score.setY(25);
-        getChildren().add(score);
+        getChildren().addAll(score, hold);
+
+        for(int i = 0; i < 3; i++) {
+            Tetrimino tetrimino = (Tetrimino) getRandomTetriminoActor();
+            tetrimino.setX(sceneWidth - 100);
+            tetrimino.setY(i * 200 + 10);
+            tetrimino.setIsMovable(false);
+            add(tetrimino);
+            tetrimino.addTiles();
+            nextTetriminos.add(i, tetrimino);
+        }
+        spawnTetrimino();
     }
 
     @Override
     public void act() {
+        if (isKeyDown(KeyCode.C) && shouldHold && canHold) {
+            Tetrimino tetriminoToSpawn = holdTetrimino;
 
+            ObservableList<Node> actors = getChildrenUnmodifiable();
+            for(Node actor : actors) {
+                if(actor instanceof Tetrimino) {
+                    Tetrimino tetrimino = (Tetrimino) actor;
+                    if (tetrimino.isMovable()) {
+                        tetrimino.setIsMovable(false);
+                        tetrimino.setYPos(50);
+                        tetrimino.setXPos(20);
+                        holdTetrimino = tetrimino;
+                        break;
+                    }
+                }
+            }
+
+            if(tetriminoToSpawn != null) {
+                int x = (int)(matrix.getWidth() / 2) - (tetriminoToSpawn.getMaxWidth() / 2);
+                if((x / 2) % 10 != 0) x -= tileSize / 2;
+                tetriminoToSpawn.setXPos(x + matrix.getX());
+                tetriminoToSpawn.setYPos(matrix.getY());
+                tetriminoToSpawn.setIsMovable(true);
+            } else spawnTetrimino();
+            shouldHold = false;
+            canHold = false;
+        }
     }
 
     public void delayedAct() {
@@ -86,33 +136,61 @@ public class TetrisWorld extends World {
         if(scoreToAdd > 0) score.setScoreVal(score.getScoreVal() + scoreToAdd);
     }
 
-    public void spawnTetrimino() {
+    public Tetrimino spawnTetrimino() {
+        if(getMovableTetrimino() != null) return null;
+        Tetrimino tetriminoToSpawn = nextTetriminos.remove(0);
+        canHold = true;
+
+        int x = (int)(matrix.getWidth() / 2) - (tetriminoToSpawn.getMaxWidth() / 2);
+        if((x / 2) % 10 != 0) x -= tileSize / 2;
+
+        tetriminoToSpawn.setIsMovable(true);
+        tetriminoToSpawn.setYPos(matrix.getY());
+        tetriminoToSpawn.setXPos(x + matrix.getX());
+
+        Tetrimino tetriminoToAdd = (Tetrimino) getRandomTetriminoActor();
+        tetriminoToAdd.setIsMovable(false);
+        add(tetriminoToAdd);
+        tetriminoToAdd.addTiles();
+        nextTetriminos.add(tetriminoToAdd);
+
+        for(int i = 0; i < nextTetriminos.size(); i++) {
+            nextTetriminos.get(i).setXPos(700);
+            nextTetriminos.get(i).setYPos(i * 200 + 20);
+        }
+        return tetriminoToSpawn;
+    }
+
+    public Tetrimino getMovableTetrimino() {
+        ObservableList<Node> actors = getChildrenUnmodifiable();
+        for(Node actor : actors) {
+            if(actor instanceof Tetrimino) {
+                Tetrimino tetrimino = (Tetrimino) actor;
+                if (tetrimino.isMovable()) {
+                    return tetrimino;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Actor getRandomTetriminoActor() {
         Class[] tetriminoShapes = {ITetrimino.class, JTetrimino.class, LTetrimino.class, OTetrimino.class, STetrimino.class,
                 TTetrimino.class, ZTetrminio.class};
         Class tetriminoShape = tetriminoShapes[(int)(Math.random() * tetriminoShapes.length)];
 
         Actor actor = null;
-
         try {
             actor = (Actor) tetriminoShape.getDeclaredConstructor(int.class).newInstance(tileSize);
-            Tetrimino tetrimino = (Tetrimino) actor;
-            actor.setY(matrix.getY());
-            int x = (int)(matrix.getWidth() / 2) - (tetrimino.getMaxWidth() / 2);
-            if((x / 2) % 10 != 0) x -= tileSize / 2;
-            actor.setX(x + matrix.getX());
-            add(actor);
-            tetrimino.addTiles();
+            return actor;
         } catch(NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             System.out.println(e);
+            return null;
         }
     }
 
     public int getTileSize() {
         return tileSize;
-    }
-
-    public void setTileSize(int tileSize) {
-        this.tileSize = tileSize;
     }
 
     public boolean getShouldRotate() {
@@ -135,7 +213,7 @@ public class TetrisWorld extends World {
         return matrix;
     }
 
-    public Score getScore() {
-        return score;
+    public void setShouldHold(boolean shouldHold) {
+        this.shouldHold = shouldHold;
     }
 }
