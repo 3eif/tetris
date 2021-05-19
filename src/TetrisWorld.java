@@ -11,25 +11,19 @@ public class TetrisWorld extends World {
     private boolean shouldRotate;
     private boolean shouldMoveToNextTile;
 
-    private MatrixTile[][] matrix;
+    private Matrix matrix;
+    private Score score;
 
-    public TetrisWorld(int tileSize, Image matrixTileImage) {
+    public TetrisWorld(int tileSize, Image matrixTileImage, double sceneWidth, double sceneHeight) {
         this.tileSize = tileSize;
 
-        matrix = new MatrixTile[21][10];
-        for(int r = 0; r < matrix.length; r++) {
-            for(int c = 0; c < matrix[r].length; c++) {
-                MatrixTile tile;
-                if(r == matrix.length - 1) tile = new BottomTile(matrixTileImage);
-                else tile = new MatrixTile(matrixTileImage);
-                tile.setFitHeight(getTileSize());
-                tile.setFitWidth(getTileSize());
-                tile.setX(c * tile.getWidth());
-                tile.setY(r * tile.getHeight());
-                add(tile);
-                matrix[r][c] = tile;
-            }
-        }
+        matrix = new Matrix(21, 10, tileSize, (int)(sceneWidth / 2) - (int)((getTileSize() * 10) / 2), 0, matrixTileImage);
+        matrix.addMatrixToWorld(this);
+
+        score = new Score();
+        score.setX(25);
+        score.setY(25);
+        getChildren().add(score);
     }
 
     @Override
@@ -38,12 +32,13 @@ public class TetrisWorld extends World {
     }
 
     public void delayedAct() {
+        MatrixTile[][] matrixTiles = matrix.getMatrixTiles();
         ArrayList<Double> rowYs = new ArrayList<Double>();
-        for(int r = 0; r < matrix.length; r++) {
+        for(int r = 0; r < matrixTiles.length; r++) {
             // First check if a row is filled with tetrimino tiles
             boolean isColFilled = true;
-            for(int c = 0; c < matrix[r].length; c++) {
-                MatrixTile tile = matrix[r][c];
+            for(int c = 0; c < matrixTiles[r].length; c++) {
+                MatrixTile tile = matrixTiles[r][c];
                 if(tile.getTetrminoTileAbove() == null || tile.getTetrminoTileAbove().getParentTetrimino().isMovable()) {
                     isColFilled = false;
                     break;
@@ -52,11 +47,11 @@ public class TetrisWorld extends World {
 
             // If it is filled then remove the row
             if(isColFilled) {
-                for(int c = 0; c < matrix[r].length; c++) {
-                    MatrixTile tile = matrix[r][c];
+                for(int c = 0; c < matrixTiles[r].length; c++) {
+                    MatrixTile tile = matrixTiles[r][c];
                     getChildren().remove(tile.getTetrminoTileAbove());
                 }
-                rowYs.add(matrix[r][0].getY());
+                rowYs.add(matrixTiles[r][0].getY());
             }
         }
 
@@ -73,6 +68,22 @@ public class TetrisWorld extends World {
                 }
             }
         }
+
+        int scoreToAdd = 0;
+        switch (rowYs.size()) {
+            case 1:
+                scoreToAdd = 100;
+                break;
+            case 2:
+                scoreToAdd = 300;
+                break;
+            case 3:
+                scoreToAdd = 500;
+                break;
+            case 4:
+                scoreToAdd = 800;
+        }
+        if(scoreToAdd > 0) score.setScoreVal(score.getScoreVal() + scoreToAdd);
     }
 
     public void spawnTetrimino() {
@@ -85,10 +96,10 @@ public class TetrisWorld extends World {
         try {
             actor = (Actor) tetriminoShape.getDeclaredConstructor(int.class).newInstance(tileSize);
             Tetrimino tetrimino = (Tetrimino) actor;
-            actor.setY(0);
-            int x = (int)(getWidth() / 2) - (tetrimino.getMaxWidth() / 2);
+            actor.setY(matrix.getY());
+            int x = (int)(matrix.getWidth() / 2) - (tetrimino.getMaxWidth() / 2);
             if((x / 2) % 10 != 0) x -= tileSize / 2;
-            actor.setX(x);
+            actor.setX(x + matrix.getX());
             add(actor);
             tetrimino.addTiles();
         } catch(NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -120,11 +131,11 @@ public class TetrisWorld extends World {
         this.shouldMoveToNextTile = shouldMove;
     }
 
-    public MatrixTile[][] getMatrix() {
+    public Matrix getMatrix() {
         return matrix;
     }
 
-    public void setMatrix(MatrixTile[][] matrix) {
-        this.matrix = matrix;
+    public Score getScore() {
+        return score;
     }
 }

@@ -17,12 +17,16 @@ public class Tetris extends Application {
         stage.setTitle("Tetris");
         stage.setResizable(false);
         BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 300, 600);
+
+        double sceneWidth = 900;
+        double sceneHeight = 700;
+
+        Scene scene = new Scene(root, sceneWidth, sceneHeight);
 
         String matrixTileImagePath = getClass().getClassLoader().getResource("black-tile.png").toString();
         Image matrixTileImage = new Image(matrixTileImagePath);
 
-        TetrisWorld tetrisWorld = new TetrisWorld(30, matrixTileImage);
+        TetrisWorld tetrisWorld = new TetrisWorld(30, matrixTileImage, sceneWidth, sceneHeight);
         tetrisWorld.setMinHeight(scene.getHeight());
         tetrisWorld.setMinWidth(scene.getWidth());
         tetrisWorld.setOnKeyPressed(new EventHandler<KeyEvent>() {

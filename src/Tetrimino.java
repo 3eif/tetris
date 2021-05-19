@@ -56,17 +56,18 @@ public abstract class Tetrimino extends Actor {
     @Override
     public void act() {
         TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
+        Matrix matrix = tetrisWorld.getMatrix();
 
         // Controls how fast you can move your tetrimino.
         boolean shouldMoveToNextTile = tetrisWorld.getShouldMoveToNextTile();
-        if (getWorld().isKeyDown(KeyCode.RIGHT) && getX() + maxWidth + tileSize <= tetrisWorld.getWidth()) {
+        if (getWorld().isKeyDown(KeyCode.RIGHT) && getX() + maxWidth + tileSize <= matrix.getWidth() + matrix.getX()) {
             distanceToMove = shouldMoveToNextTile ? tileSize : distanceToMove + MOVE_SENSITIVITY;
             if (distanceToMove == tileSize) {
                 moveHorizontal(distanceToMove);
                 distanceToMove = 0;
             }
         }
-        if (getWorld().isKeyDown(KeyCode.LEFT) && getX() - tileSize >= 0) {
+        if (getWorld().isKeyDown(KeyCode.LEFT) && getX() - tileSize >= matrix.getX()) {
             distanceToMove = shouldMoveToNextTile ? -tileSize : distanceToMove - MOVE_SENSITIVITY;
             if (distanceToMove == -tileSize) {
                 moveHorizontal(distanceToMove);
@@ -79,7 +80,7 @@ public abstract class Tetrimino extends Actor {
         }
         if (shouldMoveToNextTile) tetrisWorld.setShouldMoveToNextTile(false);
 
-        if (getWorld().isKeyDown(KeyCode.DOWN) && getY() + maxHeight < getWorld().getHeight()) {
+        if (getWorld().isKeyDown(KeyCode.DOWN) && getY() + maxHeight < matrix.getHeight() + matrix.getY()) {
             moveVertical(tileSize);
         }
 
@@ -109,7 +110,6 @@ public abstract class Tetrimino extends Actor {
     }
 
     public void delayedAct() {
-        TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
         if (getY() + getFitHeight() < getWorld().getHeight()) {
             moveVertical(tileSize);
         }
@@ -129,7 +129,6 @@ public abstract class Tetrimino extends Actor {
     }
 
     public void moveHorizontal(double v) {
-        TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
         setX(getX() + v);
         for (int r = 0; r < tiles.length; r++) {
             for (int c = 0; c < tiles[r].length; c++) {
