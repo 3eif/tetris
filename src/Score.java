@@ -7,7 +7,6 @@ public class Score extends Text{
     public Score() {
         scoreVal = 0;
         setFont(new Font(30));
-        setStyle("-fx-text-fill: green; -fx-font-size: 16px;");
         updateDisplay();
     }
 
