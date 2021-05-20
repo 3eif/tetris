@@ -96,15 +96,15 @@ public abstract class Tetrimino extends Actor {
 
     public void rotate() {
         TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
-
+        
         TetriminoTile[][] newTiles = new TetriminoTile[tiles.length][tiles[0].length];
         for (int r = 0; r < tiles.length; r++) {
             for (int c = 0; c < tiles[r].length; c++) {
-                if (tiles[r][c] != null) {
-                    TetriminoTile tile = tiles[r][c];
-                    tile.setX(getX() + c * tileSize);
-                    tile.setY(getY() + r * tileSize);
-                    newTiles[c][r] = tile;
+                if (tiles[tiles[r].length - c - 1][r] != null) {
+                    TetriminoTile tile = tiles[tiles[r].length - c - 1][r];
+                    tile.setX(getX() + r * tileSize);
+                    tile.setY(getY() + (tiles[r].length - c - 1) * tileSize);
+                    newTiles[r][c] = tile;
                 }
             }
         }
