@@ -175,14 +175,13 @@ public class TetrisWorld extends World {
     }
 
     public Actor getRandomTetriminoActor() {
-        Class[] tetriminoShapes = {ITetrimino.class, JTetrimino.class, LTetrimino.class, OTetrimino.class, STetrimino.class,
-                TTetrimino.class, ZTetrminio.class};
+        Class[] tetriminoShapes = {JTetrimino.class};
         Class tetriminoShape = tetriminoShapes[(int)(Math.random() * tetriminoShapes.length)];
 
         Actor actor = null;
         try {
             actor = (Actor) tetriminoShape.getDeclaredConstructor(int.class).newInstance(tileSize);
-            return actor;
+            return (Actor)(new JTetrimino(tileSize));
         } catch(NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             System.out.println(e);
             return null;

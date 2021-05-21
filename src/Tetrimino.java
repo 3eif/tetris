@@ -96,7 +96,7 @@ public abstract class Tetrimino extends Actor {
 
     public void rotate() {
         TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
-        
+
         TetriminoTile[][] newTiles = new TetriminoTile[tiles.length][tiles[0].length];
         for (int r = 0; r < tiles.length; r++) {
             for (int c = 0; c < tiles[r].length; c++) {
@@ -108,12 +108,20 @@ public abstract class Tetrimino extends Actor {
                 }
             }
         }
+
+
         tiles = newTiles;
         tetrisWorld.setShouldRotate(false);
+    }
 
-        int temp = maxWidth;
-        maxWidth = maxHeight;
-        maxHeight = temp;
+    public int calculatePadding(TetriminoTile[] tiles, int index) {
+        int padding = 0;
+        boolean hasFoundTile = false;
+        for (TetriminoTile tile : tiles) {
+            if(hasFoundTile) padding += tileSize;
+            if (tile != null) hasFoundTile = true;
+        }
+        return padding;
     }
 
     public void delayedAct() {
