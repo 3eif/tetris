@@ -1,43 +1,31 @@
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 
+import java.awt.*;
+
 public abstract class Tetrimino extends Actor {
     private boolean isMovable = true;
     private TetriminoTile[][] tiles;
     private final int[][] shape;
     private final Image image;
 
-    private int maxWidth;
-    private int maxHeight;
+    private double maxWidth;
+    private double maxHeight;
 
     private final int tileSize;
     private double distanceToMove;
     private static final double MOVE_SENSITIVITY = 0.1;
 
-    public Tetrimino(int tileSize, int[][] shape, String tileImage) {
+    public Tetrimino(double width, double height, int tileSize, int[][] shape, String tileImage) {
         String tetriminoImagePath = getClass().getClassLoader().getResource(tileImage).toString();
 
+        this.maxWidth = width * tileSize;
+        this.maxHeight = height * tileSize;
         this.image = new Image(tetriminoImagePath);
         this.shape = shape;
         this.tileSize = tileSize;
 
         tiles = new TetriminoTile[shape.length][shape[0].length];
-        setDimensions();
-    }
-
-    private void setDimensions() {
-        for (int r = 0; r < shape.length; r++) {
-            int width = 0;
-            int height = 0;
-            for (int c = 0; c < shape[r].length; c++) {
-                if (shape[r][c] == 1) {
-                    width += tileSize;
-                } else tiles[r][c] = null;
-                if (width > maxWidth) maxWidth = width;
-                if (shape[c][r] == 1) height += tileSize;
-            }
-            if (height > maxHeight) maxHeight = height;
-        }
     }
 
     public void addTiles() {
@@ -51,7 +39,17 @@ public abstract class Tetrimino extends Actor {
                     tile.setY(getY() + r * tileSize);
                     tiles[r][c] = tile;
                     getWorld().add(tile);
-                } else tiles[r][c] = null;
+                } else {
+                    tiles[r][c] = null;
+//                    String tetriminoImagePath = getClass().getClassLoader().getResource("./resources/white-tile.png").toString();
+//                    TetriminoTile tile = new TetriminoTile(this, new Image(tetriminoImagePath));
+//                    tile.setFitHeight(tileSize);
+//                    tile.setFitWidth(tileSize);
+//                    tile.setX(getX() + c * tileSize);
+//                    tile.setY(getY() + r * tileSize);
+//                    tiles[r][c] = tile;
+//                    getWorld().add(tile);
+                }
             }
         }
     }
@@ -61,16 +59,27 @@ public abstract class Tetrimino extends Actor {
         TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
         Matrix matrix = tetrisWorld.getMatrix();
 
+        double xOfFirstTile = Integer.MAX_VALUE;
+        double yOfFirstTile = Integer.MAX_VALUE;
+        for (TetriminoTile[] tetriminoTiles : tiles) {
+            for (Tile tile : tetriminoTiles) {
+                if (tile != null) {
+                    if (tile.getX() < xOfFirstTile) xOfFirstTile = tile.getX();
+                    if (tile.getY() < yOfFirstTile) yOfFirstTile = tile.getY();
+                }
+            }
+        }
+
         // Controls how fast you can move your tetrimino.
         boolean shouldMoveToNextTile = tetrisWorld.getShouldMoveToNextTile();
-        if (getWorld().isKeyDown(KeyCode.RIGHT) && getX() + maxWidth + tileSize <= matrix.getWidth() + matrix.getX()) {
+        if (getWorld().isKeyDown(KeyCode.RIGHT) && xOfFirstTile + maxWidth < matrix.getWidth() + matrix.getX()) {
             distanceToMove = shouldMoveToNextTile ? tileSize : distanceToMove + MOVE_SENSITIVITY;
             if (distanceToMove == tileSize) {
                 moveHorizontal(distanceToMove);
                 distanceToMove = 0;
             }
         }
-        if (getWorld().isKeyDown(KeyCode.LEFT) && getX() - tileSize >= matrix.getX()) {
+        if (getWorld().isKeyDown(KeyCode.LEFT) && xOfFirstTile - tileSize >= matrix.getX()) {
             distanceToMove = shouldMoveToNextTile ? -tileSize : distanceToMove - MOVE_SENSITIVITY;
             if (distanceToMove == -tileSize) {
                 moveHorizontal(distanceToMove);
@@ -97,31 +106,42 @@ public abstract class Tetrimino extends Actor {
     public void rotate() {
         TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
 
-        TetriminoTile[][] newTiles = new TetriminoTile[tiles.length][tiles[0].length];
-        for (int r = 0; r < tiles.length; r++) {
-            for (int c = 0; c < tiles[r].length; c++) {
+        TetriminoTile[][] newTiles = new TetriminoTile[tiles[0].length][tiles.length];
+        for (int r = 0; r < tiles.length; ++r) {
+            for (int c = 0; c < tiles[r].length; ++c) {
                 if (tiles[tiles[r].length - c - 1][r] != null) {
                     TetriminoTile tile = tiles[tiles[r].length - c - 1][r];
-                    tile.setX(getX() + r * tileSize);
-                    tile.setY(getY() + (tiles[r].length - c - 1) * tileSize);
                     newTiles[r][c] = tile;
                 }
             }
         }
 
-
         tiles = newTiles;
-        tetrisWorld.setShouldRotate(false);
-    }
-
-    public int calculatePadding(TetriminoTile[] tiles, int index) {
-        int padding = 0;
-        boolean hasFoundTile = false;
-        for (TetriminoTile tile : tiles) {
-            if(hasFoundTile) padding += tileSize;
-            if (tile != null) hasFoundTile = true;
+        for (int r = 0; r < tiles.length; r++) {
+            for (int c = 0; c < tiles[r].length; c++) {
+                TetriminoTile tile = tiles[r][c];
+                if (tile != null) {
+                    tile.setX(getX() + c * tileSize);
+                    tile.setY(getY() + r * tileSize);
+                }
+            }
         }
-        return padding;
+
+        double temp = maxHeight;
+        maxHeight = maxWidth;
+        maxWidth = temp;
+        tetrisWorld.setShouldRotate(false);
+
+        // Prevents block from going out of matrix when rotating
+        Matrix matrix = tetrisWorld.getMatrix();
+        for (TetriminoTile[] tetriminoTiles : tiles) {
+            for (Tile tile : tetriminoTiles) {
+                if (tile != null) {
+                    if (tile.getX() < matrix.getX()) moveHorizontal(tileSize);
+                    if (tile.getX() + tileSize > matrix.getX() + matrix.getWidth()) moveHorizontal(-tileSize);
+                }
+            }
+        }
     }
 
     public void delayedAct() {
@@ -184,11 +204,21 @@ public abstract class Tetrimino extends Actor {
         this.isMovable = isMovable;
     }
 
-    public int getMaxWidth() {
+    public double getMaxWidth() {
         return maxWidth;
     }
 
-    public int getMaxHeight() {
+    public double getMaxHeight() {
         return maxHeight;
+    }
+
+    public void printTetrimino(TetriminoTile[][] tiles) {
+        for (TetriminoTile[] tetriminoTiles : tiles) {
+            for (TetriminoTile tetriminoTile : tetriminoTiles) {
+                if (tetriminoTile != null) System.out.print("▉");
+                else System.out.print("░");
+            }
+            System.out.println();
+        }
     }
 }

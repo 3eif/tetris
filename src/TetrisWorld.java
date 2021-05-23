@@ -70,9 +70,9 @@ public class TetrisWorld extends World {
             }
 
             if(tetriminoToSpawn != null) {
-                int x = (int)(matrix.getWidth() / 2) - (tetriminoToSpawn.getMaxWidth() / 2);
-                if((x / 2) % 10 != 0) x -= tileSize / 2;
-                tetriminoToSpawn.setXPos(x + matrix.getX());
+                int x = (int) (matrix.getX() + (matrix.getWidth() / 2) - (tetriminoToSpawn.getMaxWidth() / 2));
+                if(x % 10 == 5) x -= tileSize / 2;
+                tetriminoToSpawn.setXPos(x);
                 tetriminoToSpawn.setYPos(matrix.getY());
                 tetriminoToSpawn.setIsMovable(true);
             } else spawnTetrimino();
@@ -141,12 +141,12 @@ public class TetrisWorld extends World {
         Tetrimino tetriminoToSpawn = nextTetriminos.remove(0);
         canHold = true;
 
-        int x = (int)(matrix.getWidth() / 2) - (tetriminoToSpawn.getMaxWidth() / 2);
-        if((x / 2) % 10 != 0) x -= tileSize / 2;
+        int x = (int) (matrix.getX() + (matrix.getWidth() / 2) - (tetriminoToSpawn.getMaxWidth() / 2));
+        if(x % 10 == 5) x -= tileSize / 2;
 
         tetriminoToSpawn.setIsMovable(true);
         tetriminoToSpawn.setYPos(matrix.getY());
-        tetriminoToSpawn.setXPos(x + matrix.getX());
+        tetriminoToSpawn.setXPos(x);
 
         Tetrimino tetriminoToAdd = (Tetrimino) getRandomTetriminoActor();
         tetriminoToAdd.setIsMovable(false);
@@ -175,13 +175,14 @@ public class TetrisWorld extends World {
     }
 
     public Actor getRandomTetriminoActor() {
-        Class[] tetriminoShapes = {JTetrimino.class};
+        Class[] tetriminoShapes = {ITetrimino.class, JTetrimino.class, LTetrimino.class, OTetrimino.class, STetrimino.class,
+                TTetrimino.class, ZTetrminio.class};
         Class tetriminoShape = tetriminoShapes[(int)(Math.random() * tetriminoShapes.length)];
 
         Actor actor = null;
         try {
             actor = (Actor) tetriminoShape.getDeclaredConstructor(int.class).newInstance(tileSize);
-            return (Actor)(new JTetrimino(tileSize));
+            return actor;
         } catch(NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             System.out.println(e);
             return null;

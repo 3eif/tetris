@@ -1,12 +1,13 @@
 public class TTetrimino extends Tetrimino {
+    private static final int width = 3;
+    private static final int height = 2;
     private static final int[][] shape = {
-            {0, 1, 0, 0},
-            {1, 1, 1, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}
+            {0, 1, 0},
+            {1, 1, 1},
+            {0, 0, 0},
     };
 
     public TTetrimino(int tileSize) {
-        super(tileSize, shape, "./resources/orange-tile.png");
+        super(width, height, tileSize, shape, "./resources/orange-tile.png");
     }
 }
