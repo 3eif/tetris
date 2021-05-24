@@ -8,7 +8,7 @@ public class BottomTile extends MatrixTile {
     }
 
     @Override
-    public void act() {
+    public void act(long now) {
         TetriminoTile tetriminoTile = getOneIntersectingObject(TetriminoTile.class);
         if(tetriminoTile != null && tetriminoTile.getParentTetrimino().isMovable()) {
             TetrisWorld tetrisWorld = (TetrisWorld) getWorld();

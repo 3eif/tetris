@@ -8,7 +8,7 @@ public class MatrixTile extends Tile {
     }
 
     @Override
-    public void act() {
+    public void act(long now) {
 
     }
 

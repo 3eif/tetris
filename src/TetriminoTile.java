@@ -25,7 +25,7 @@ public class TetriminoTile extends Tile {
     }
 
     @Override
-    public void act() {
+    public void act(long now) {
         TetriminoTile tetriminoTile = getOneIntersectingObject(TetriminoTile.class);
         if(tetriminoTile != null && tetriminoTile.getParentTetrimino() != parentTetrimino && parentTetrimino.isMovable()) {
             TetrisWorld tetrisWorld = (TetrisWorld) getWorld();

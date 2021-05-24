@@ -1,9 +1,7 @@
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -29,24 +27,19 @@ public class Tetris extends Application {
         TetrisWorld tetrisWorld = new TetrisWorld(30, matrixTileImage, sceneWidth, sceneHeight);
         tetrisWorld.setMinHeight(scene.getHeight());
         tetrisWorld.setMinWidth(scene.getWidth());
-        tetrisWorld.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if(keyEvent.getCode() == KeyCode.UP && !tetrisWorld.isKeyDown(KeyCode.UP)) tetrisWorld.setShouldRotate(true);
-                if((keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.RIGHT) &&
-                        (!tetrisWorld.isKeyDown(KeyCode.RIGHT) || !tetrisWorld.isKeyDown(KeyCode.LEFT))) {
-                    tetrisWorld.setShouldMoveToNextTile(true);
-                }
-                if(keyEvent.getCode() == KeyCode.C && !tetrisWorld.isKeyDown(KeyCode.C)) tetrisWorld.setShouldHold(true);
-                tetrisWorld.addKeyCode(keyEvent.getCode());
-            }
+        tetrisWorld.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.UP && !tetrisWorld.isKeyDown(KeyCode.UP))
+                tetrisWorld.setShouldRotate(true);
+            if (keyEvent.getCode() == KeyCode.C && !tetrisWorld.isKeyDown(KeyCode.C))
+                tetrisWorld.setShouldHold(true);
+            if (keyEvent.getCode() == KeyCode.DOWN && !tetrisWorld.isKeyDown(KeyCode.DOWN))
+                tetrisWorld.setShouldMoveDown(true);
+            if ((keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.RIGHT) &&
+                    (!tetrisWorld.isKeyDown(KeyCode.RIGHT) || !tetrisWorld.isKeyDown(KeyCode.LEFT)))
+                tetrisWorld.setShouldMoveToNextTile(true);
+            tetrisWorld.addKeyCode(keyEvent.getCode());
         });
-        tetrisWorld.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                tetrisWorld.removeKeyCode(keyEvent.getCode());
-            }
-        });
+        tetrisWorld.setOnKeyReleased(keyEvent -> tetrisWorld.removeKeyCode(keyEvent.getCode()));
         tetrisWorld.start();
 
         root.setCenter(tetrisWorld);

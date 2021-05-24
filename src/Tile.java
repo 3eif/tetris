@@ -6,7 +6,7 @@ public class Tile extends Actor {
     }
 
     @Override
-    public void act() {
+    public void act(long now) {
 
     }
 }

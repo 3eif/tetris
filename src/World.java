@@ -10,36 +10,25 @@ import java.util.HashSet;
 public abstract class World extends Pane {
     AnimationTimer timer;
     private double mouseX = 0;
+    private long prev = 0;
     HashSet<KeyCode> keyCodes = new HashSet<KeyCode>();
 
     public World() {
         timer = new AnimationTimer() {
-            long prev = 0;
             @Override
             public void handle(long now) {
-                act();
+                act(now);
 
                 ObservableList<Node> children = getChildren();
                 for (int i = 0; i < children.size(); i++) {
-                    if (children.get(i) instanceof Tetrimino) {
-                        Tetrimino t = (Tetrimino) (children.get(i));
-                        if(t.isMovable()) t.act();
-                    } else if (children.get(i) instanceof Actor) {
+                    if (children.get(i) instanceof Actor) {
                         Actor a = (Actor) (children.get(i));
-                        a.act();
+                        a.act(now);
                     }
                 }
 
                 if (now - prev > (1e6 * 500)) {
                     prev = now;
-                    delayedAct();
-
-                    for (int i = 0; i < children.size(); i++) {
-                        if (children.get(i) instanceof Tetrimino) {
-                            Tetrimino t = (Tetrimino) (children.get(i));
-                            if(t.isMovable()) t.delayedAct();
-                        }
-                    }
                 }
             }
         };
@@ -57,8 +46,7 @@ public abstract class World extends Pane {
         return keyCodes.contains(keyCode);
     }
 
-    public abstract void act();
-    public abstract void delayedAct();
+    public abstract void act(long now);
 
     public void add(Actor actor) {
         getChildren().add(actor);
@@ -92,5 +80,9 @@ public abstract class World extends Pane {
 
     public void setMouseX(double mouseX) {
         this.mouseX = mouseX;
+    }
+
+    public long getPrev() {
+        return prev;
     }
 }

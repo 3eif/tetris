@@ -13,6 +13,7 @@ public class TetrisWorld extends World {
 
     private boolean shouldRotate;
     private boolean shouldMoveToNextTile;
+    private boolean shouldMoveDown;
     private boolean shouldHold;
     private boolean canHold;
 
@@ -51,7 +52,7 @@ public class TetrisWorld extends World {
     }
 
     @Override
-    public void act() {
+    public void act(long now) {
         if (isKeyDown(KeyCode.C) && shouldHold && canHold) {
             Tetrimino tetriminoToSpawn = holdTetrimino;
 
@@ -79,64 +80,65 @@ public class TetrisWorld extends World {
             shouldHold = false;
             canHold = false;
         }
-    }
 
-    public void delayedAct() {
-        MatrixTile[][] matrixTiles = matrix.getMatrixTiles();
-        ArrayList<Double> rowYs = new ArrayList<Double>();
-        for(int r = 0; r < matrixTiles.length; r++) {
-            // First check if a row is filled with tetrimino tiles
-            boolean isColFilled = true;
-            for(int c = 0; c < matrixTiles[r].length; c++) {
-                MatrixTile tile = matrixTiles[r][c];
-                if(tile.getTetrminoTileAbove() == null || tile.getTetrminoTileAbove().getParentTetrimino().isMovable()) {
-                    isColFilled = false;
-                    break;
-                }
-            }
-
-            // If it is filled then remove the row
-            if(isColFilled) {
-                for(int c = 0; c < matrixTiles[r].length; c++) {
+        if (now - getPrev() > (1e6 * 500)) {
+            MatrixTile[][] matrixTiles = matrix.getMatrixTiles();
+            ArrayList<Double> rowYs = new ArrayList<Double>();
+            for (int r = 0; r < matrixTiles.length; r++) {
+                // First check if a row is filled with tetrimino tiles
+                boolean isColFilled = true;
+                for (int c = 0; c < matrixTiles[r].length; c++) {
                     MatrixTile tile = matrixTiles[r][c];
-                    getChildren().remove(tile.getTetrminoTileAbove());
+                    if (tile.getTetrminoTileAbove() == null || tile.getTetrminoTileAbove().getParentTetrimino().isMovable()) {
+                        isColFilled = false;
+                        break;
+                    }
                 }
-                rowYs.add(matrixTiles[r][0].getY());
-            }
-        }
 
-        // Drop the rows down if any row has been removed from the bottom
-        if(rowYs.size() > 0) {
-            ObservableList<Node> actors = getChildrenUnmodifiable();
-            for(Node actor : actors) {
-                if(actor instanceof TetriminoTile) {
-                    TetriminoTile tetriminoTile = (TetriminoTile) actor;
-                    Tetrimino tetrimino = tetriminoTile.getParentTetrimino();
-                    if (!tetrimino.isMovable() && tetriminoTile.getY() < rowYs.get(rowYs.size() - 1) - (int)(tileSize / 2)) {
-                        tetriminoTile.setY(tetriminoTile.getY() + tileSize * rowYs.size());
+                // If it is filled then remove the row
+                if (isColFilled) {
+                    for (int c = 0; c < matrixTiles[r].length; c++) {
+                        MatrixTile tile = matrixTiles[r][c];
+                        getChildren().remove(tile.getTetrminoTileAbove());
+                    }
+                    rowYs.add(matrixTiles[r][0].getY());
+                }
+            }
+
+            // Drop the rows down if any row has been removed from the bottom
+            if (rowYs.size() > 0) {
+                ObservableList<Node> actors = getChildrenUnmodifiable();
+                for (Node actor : actors) {
+                    if (actor instanceof TetriminoTile) {
+                        TetriminoTile tetriminoTile = (TetriminoTile) actor;
+                        Tetrimino tetrimino = tetriminoTile.getParentTetrimino();
+                        if (!tetrimino.isMovable() && tetriminoTile.getY() < rowYs.get(rowYs.size() - 1) - (int) (tileSize / 2)) {
+                            tetriminoTile.setY(tetriminoTile.getY() + tileSize * rowYs.size());
+                        }
                     }
                 }
             }
-        }
 
-        int scoreToAdd = 0;
-        switch (rowYs.size()) {
-            case 1:
-                scoreToAdd = 100;
-                break;
-            case 2:
-                scoreToAdd = 300;
-                break;
-            case 3:
-                scoreToAdd = 500;
-                break;
-            case 4:
-                scoreToAdd = 800;
+            int scoreToAdd = 0;
+            switch (rowYs.size()) {
+                case 1:
+                    scoreToAdd = 100;
+                    break;
+                case 2:
+                    scoreToAdd = 300;
+                    break;
+                case 3:
+                    scoreToAdd = 500;
+                    break;
+                case 4:
+                    scoreToAdd = 800;
+            }
+            if (scoreToAdd > 0) score.setScoreVal(score.getScoreVal() + scoreToAdd);
         }
-        if(scoreToAdd > 0) score.setScoreVal(score.getScoreVal() + scoreToAdd);
     }
 
     public Tetrimino spawnTetrimino() {
+        removeKeyCode(KeyCode.DOWN);
         if(getMovableTetrimino() != null) return null;
         Tetrimino tetriminoToSpawn = nextTetriminos.remove(0);
         canHold = true;
@@ -215,5 +217,13 @@ public class TetrisWorld extends World {
 
     public void setShouldHold(boolean shouldHold) {
         this.shouldHold = shouldHold;
+    }
+
+    public boolean getShouldMoveDown() {
+        return shouldMoveDown;
+    }
+
+    public void setShouldMoveDown(boolean shouldMoveDown) {
+        this.shouldMoveDown = shouldMoveDown;
     }
 }

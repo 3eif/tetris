@@ -9,7 +9,7 @@ public abstract class Actor extends ImageView {
 
     }
 
-    public abstract void act();
+    public abstract void act(long now);
 
     public void move(double dx, double dy) {
         setX(getX() + dx);

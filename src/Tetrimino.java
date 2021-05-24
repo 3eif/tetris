@@ -1,8 +1,6 @@
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 
-import java.awt.*;
-
 public abstract class Tetrimino extends Actor {
     private boolean isMovable = true;
     private TetriminoTile[][] tiles;
@@ -14,6 +12,7 @@ public abstract class Tetrimino extends Actor {
 
     private final int tileSize;
     private double distanceToMove;
+    private double distanceToMoveDown;
     private static final double MOVE_SENSITIVITY = 0.1;
 
     public Tetrimino(double width, double height, int tileSize, int[][] shape, String tileImage) {
@@ -55,7 +54,8 @@ public abstract class Tetrimino extends Actor {
     }
 
     @Override
-    public void act() {
+    public void act(long now) {
+        if(!isMovable) return;
         TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
         Matrix matrix = tetrisWorld.getMatrix();
 
@@ -86,21 +86,38 @@ public abstract class Tetrimino extends Actor {
                 distanceToMove = 0;
             }
         }
+
+        boolean shouldMoveDown = tetrisWorld.getShouldMoveDown();
+        if (getWorld().isKeyDown(KeyCode.DOWN) && getY() + maxHeight < matrix.getHeight() + matrix.getY()) {
+            distanceToMoveDown = shouldMoveDown ? -tileSize : distanceToMoveDown - (int)(tileSize / 3);
+            if(distanceToMoveDown <= -tileSize) {
+                moveVertical(tileSize);
+                distanceToMoveDown = 0;
+            }
+        }
+
         if (!getWorld().isKeyDown(KeyCode.LEFT) && !getWorld().isKeyDown(KeyCode.RIGHT)) {
             distanceToMove = 0;
             tetrisWorld.setShouldMoveToNextTile(false);
         }
-        if (shouldMoveToNextTile) tetrisWorld.setShouldMoveToNextTile(false);
-
-        if (getWorld().isKeyDown(KeyCode.DOWN) && getY() + maxHeight < matrix.getHeight() + matrix.getY()) {
-            moveVertical(tileSize);
+        if(!getWorld().isKeyDown(KeyCode.DOWN)) {
+            distanceToMoveDown = 0;
+            tetrisWorld.setShouldMoveDown(false);
         }
+        if (shouldMoveDown) tetrisWorld.setShouldMoveDown(false);
+        if (shouldMoveToNextTile) tetrisWorld.setShouldMoveToNextTile(false);
 
 //        if (getWorld().isKeyDown(KeyCode.SPACE)) {
 //            while(isMovable && getY() + maxHeight < getWorld().getHeight()) moveVertical(tileSize);
 //        }
 
         if (tetrisWorld.getShouldRotate()) rotate();
+
+        if (now - getWorld().getPrev() > (1e6 * 500)) {
+            if (getY() + getFitHeight() < getWorld().getHeight()) {
+                moveVertical(tileSize);
+            }
+        }
     }
 
     public void rotate() {
@@ -141,12 +158,6 @@ public abstract class Tetrimino extends Actor {
                     if (tile.getX() + tileSize > matrix.getX() + matrix.getWidth()) moveHorizontal(-tileSize);
                 }
             }
-        }
-    }
-
-    public void delayedAct() {
-        if (getY() + getFitHeight() < getWorld().getHeight()) {
-            moveVertical(tileSize);
         }
     }
 
