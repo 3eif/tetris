@@ -8,7 +8,7 @@ public class Matrix {
     private double y;
     private int tileSize;
 
-    public Matrix(int rows, int cols, int tileSize, double x, double y, Image matrixTileImage) {
+    public Matrix(World world, int rows, int cols, int tileSize, double x, double y, Image matrixTileImage) {
         this.rows = rows;
         this.cols = cols;
         this.tileSize = tileSize;
@@ -28,12 +28,10 @@ public class Matrix {
                 matrixTiles[r][c] = tile;
             }
         }
-    }
 
-    public void addMatrixToWorld(World world) {
-        for(int r = 0; r < matrixTiles.length; r++) {
-            for(int c = 0; c < matrixTiles[r].length; c++) {
-                world.add(matrixTiles[r][c]);
+        for (MatrixTile[] matrixTile : matrixTiles) {
+            for (MatrixTile tile : matrixTile) {
+                world.add(tile);
             }
         }
     }

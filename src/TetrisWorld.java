@@ -1,5 +1,6 @@
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
@@ -9,8 +10,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 public class TetrisWorld extends World {
-    private int tileSize;
-
     private boolean shouldRotate;
     private boolean shouldMoveToNextTile;
     private boolean shouldMoveDown;
@@ -22,8 +21,28 @@ public class TetrisWorld extends World {
     private Tetrimino holdTetrimino;
     private ArrayList<Tetrimino> nextTetriminos = new ArrayList<Tetrimino>(3);
 
-    public TetrisWorld(int tileSize, Image matrixTileImage, double sceneWidth, double sceneHeight) {
-        this.tileSize = tileSize;
+    private final String MATRIX_TILE_IMAGE_PATH = getClass().getClassLoader().getResource("black-tile.png").toString();
+    private final Image MATRIX_TILE_IMAGE = new Image(MATRIX_TILE_IMAGE_PATH);
+
+    private final int TILE_SIZE = 30;
+
+    public TetrisWorld() {
+        setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.UP && !isKeyDown(KeyCode.UP))
+                setShouldRotate(true);
+            if (keyEvent.getCode() == KeyCode.C && !isKeyDown(KeyCode.C))
+                setShouldHold(true);
+            if (keyEvent.getCode() == KeyCode.DOWN && !isKeyDown(KeyCode.DOWN))
+                setShouldMoveDown(true);
+            if ((keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.RIGHT) &&
+                    (!isKeyDown(KeyCode.RIGHT) || !isKeyDown(KeyCode.LEFT)))
+                setShouldMoveToNextTile(true);
+            addKeyCode(keyEvent.getCode());
+        });
+        setOnKeyReleased(keyEvent -> removeKeyCode(keyEvent.getCode()));
+
+        Scene scene = GameManager.getInstance().getGame();
+
         holdTetrimino = null;
 
         Text hold = new Text("Hold");
@@ -31,8 +50,8 @@ public class TetrisWorld extends World {
         hold.setX(25);
         hold.setY(150);
 
-        matrix = new Matrix(20, 10, tileSize, (int)(sceneWidth / 2) - (int)((getTileSize() * 10) / 2), 0, matrixTileImage);
-        matrix.addMatrixToWorld(this);
+        matrix = new Matrix(this, 20, 10, TILE_SIZE, (int)(scene.getWidth() / 2) -
+                (int)((getTileSize() * 10) / 2), 0, MATRIX_TILE_IMAGE);
 
         score = new Score();
         score.setX(25);
@@ -41,7 +60,7 @@ public class TetrisWorld extends World {
 
         for(int i = 0; i < 3; i++) {
             Tetrimino tetrimino = (Tetrimino) getRandomTetriminoActor();
-            tetrimino.setX(sceneWidth - 100);
+            tetrimino.setX(scene.getWidth() - 100);
             tetrimino.setY(i * 200 + 10);
             tetrimino.setIsMovable(false);
             add(tetrimino);
@@ -73,7 +92,7 @@ public class TetrisWorld extends World {
 
             if(tetriminoToSpawn != null) {
                 int x = (int) (matrix.getX() + (matrix.getWidth() / 2) - (tetriminoToSpawn.getMaxWidth() / 2));
-                if(x % 10 == 5) x -= tileSize / 2;
+                if(x % 10 == 5) x -= TILE_SIZE / 2;
                 tetriminoToSpawn.setXPos(x);
                 tetriminoToSpawn.setYPos(matrix.getY());
                 tetriminoToSpawn.setIsMovable(true);
@@ -114,9 +133,9 @@ public class TetrisWorld extends World {
                     if (actor instanceof TetriminoTile) {
                         TetriminoTile tetriminoTile = (TetriminoTile) actor;
                         Tetrimino tetrimino = tetriminoTile.getParentTetrimino();
-                        if (!tetrimino.isMovable() && tetriminoTile.getY() < rowYs.get(rowYs.size() - 1) - (int) (tileSize / 2)
+                        if (!tetrimino.isMovable() && tetriminoTile.getY() < rowYs.get(rowYs.size() - 1) - (int) (TILE_SIZE / 2)
                                 && !tetrimino.isBeingHeld()) {
-                            tetriminoTile.setY(tetriminoTile.getY() + tileSize * rowYs.size());
+                            tetriminoTile.setY(tetriminoTile.getY() + TILE_SIZE * rowYs.size());
                         }
                     }
                 }
@@ -147,7 +166,7 @@ public class TetrisWorld extends World {
         canHold = true;
 
         int x = (int) (matrix.getX() + (matrix.getWidth() / 2) - (tetriminoToSpawn.getMaxWidth() / 2));
-        if(x % 10 == 5) x -= tileSize / 2;
+        if(x % 10 == 5) x -= TILE_SIZE / 2;
 
         tetriminoToSpawn.setIsMovable(true);
         tetriminoToSpawn.setYPos(matrix.getY());
@@ -186,7 +205,7 @@ public class TetrisWorld extends World {
 
         Actor actor = null;
         try {
-            actor = (Actor) tetriminoShape.getDeclaredConstructor(int.class).newInstance(tileSize);
+            actor = (Actor) tetriminoShape.getDeclaredConstructor(int.class).newInstance(TILE_SIZE);
             return actor;
         } catch(NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             System.out.println(e);
@@ -195,7 +214,7 @@ public class TetrisWorld extends World {
     }
 
     public int getTileSize() {
-        return tileSize;
+        return TILE_SIZE;
     }
 
     public boolean getShouldRotate() {
