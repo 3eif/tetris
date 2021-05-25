@@ -1,3 +1,8 @@
+package com.seifabdelaziz.tetris;
+
+import com.seifabdelaziz.tetris.Engine.GameManager;
+import com.seifabdelaziz.tetris.Engine.Soundtrack;
+import com.seifabdelaziz.tetris.Scenes.Menu;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;

@@ -1,3 +1,8 @@
+package com.seifabdelaziz.tetris.Tiles;
+
+import com.seifabdelaziz.tetris.Engine.Actor;
+import com.seifabdelaziz.tetris.Scenes.TetrisWorld;
+import com.seifabdelaziz.tetris.Tetriminoes.Tetrimino;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;

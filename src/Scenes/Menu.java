@@ -1,3 +1,7 @@
+package com.seifabdelaziz.tetris.Scenes;
+
+import com.seifabdelaziz.tetris.Engine.GameManager;
+import com.seifabdelaziz.tetris.Engine.World;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;

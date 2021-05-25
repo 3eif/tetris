@@ -1,3 +1,10 @@
+package com.seifabdelaziz.tetris.Tetriminoes;
+
+import com.seifabdelaziz.tetris.Engine.Actor;
+import com.seifabdelaziz.tetris.Tiles.Matrix;
+import com.seifabdelaziz.tetris.Scenes.TetrisWorld;
+import com.seifabdelaziz.tetris.Tiles.Tile;
+import com.seifabdelaziz.tetris.Tiles.TetriminoTile;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 
@@ -110,7 +117,7 @@ public abstract class Tetrimino extends Actor {
         if (shouldMoveToNextTile) tetrisWorld.setShouldMoveToNextTile(false);
 
 //        if (getWorld().isKeyDown(KeyCode.SPACE)) {
-//            while(isMovable && getY() + maxHeight < getWorld().getHeight()) moveVertical(tileSize);
+//            while(isMovable && getY() + maxHeight < matrix.getHeight() + matrix.getY()) moveVertical(tileSize);
 //        }
 
         if (tetrisWorld.getShouldRotate()) rotate();

@@ -1,3 +1,8 @@
+package com.seifabdelaziz.tetris.Tiles;
+
+import com.seifabdelaziz.tetris.Engine.World;
+import com.seifabdelaziz.tetris.Tiles.BottomTile;
+import com.seifabdelaziz.tetris.Tiles.MatrixTile;
 import javafx.scene.image.Image;
 
 public class Matrix {

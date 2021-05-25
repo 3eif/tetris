@@ -1,3 +1,5 @@
+package com.seifabdelaziz.tetris.Tetriminoes;
+
 public class OTetrimino extends Tetrimino {
     private static final int width = 2;
     private static final int height = 2;
