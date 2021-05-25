@@ -65,6 +65,7 @@ public class TetrisWorld extends World {
                         tetrimino.setYPos(50);
                         tetrimino.setXPos(20);
                         holdTetrimino = tetrimino;
+                        holdTetrimino.setBeingHeld(true);
                         break;
                     }
                 }
@@ -76,6 +77,7 @@ public class TetrisWorld extends World {
                 tetriminoToSpawn.setXPos(x);
                 tetriminoToSpawn.setYPos(matrix.getY());
                 tetriminoToSpawn.setIsMovable(true);
+                tetriminoToSpawn.setBeingHeld(false);
             } else spawnTetrimino();
             shouldHold = false;
             canHold = false;
@@ -112,7 +114,8 @@ public class TetrisWorld extends World {
                     if (actor instanceof TetriminoTile) {
                         TetriminoTile tetriminoTile = (TetriminoTile) actor;
                         Tetrimino tetrimino = tetriminoTile.getParentTetrimino();
-                        if (!tetrimino.isMovable() && tetriminoTile.getY() < rowYs.get(rowYs.size() - 1) - (int) (tileSize / 2)) {
+                        if (!tetrimino.isMovable() && tetriminoTile.getY() < rowYs.get(rowYs.size() - 1) - (int) (tileSize / 2)
+                                && !tetrimino.isBeingHeld()) {
                             tetriminoTile.setY(tetriminoTile.getY() + tileSize * rowYs.size());
                         }
                     }

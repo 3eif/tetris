@@ -3,9 +3,14 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Tetris extends Application {
+    MediaPlayer soundtrackPlayer;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -42,11 +47,20 @@ public class Tetris extends Application {
         tetrisWorld.setOnKeyReleased(keyEvent -> tetrisWorld.removeKeyCode(keyEvent.getCode()));
         tetrisWorld.start();
 
+        String soundtrackAudioFilePath = getClass().getClassLoader().getResource("./resources/tetris.mp3").toString();
+        Media soundtrack = new Media(soundtrackAudioFilePath);
+        soundtrackPlayer = new MediaPlayer(soundtrack);
+        soundtrackPlayer.setVolume(0.1);
+        soundtrackPlayer.setAutoPlay(true);
+        soundtrackPlayer.setOnEndOfMedia(() -> {
+            soundtrackPlayer.seek(Duration.ZERO);
+        });
+        // TODO: Make looping sound better
+
         root.setCenter(tetrisWorld);
         stage.setScene(scene);
         stage.show();
         tetrisWorld.requestFocus();
-
         tetrisWorld.spawnTetrimino();
     }
 }

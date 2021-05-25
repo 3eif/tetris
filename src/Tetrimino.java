@@ -3,14 +3,16 @@ import javafx.scene.input.KeyCode;
 
 public abstract class Tetrimino extends Actor {
     private boolean isMovable = true;
+    private boolean isBeingHeld = false;
+
     private TetriminoTile[][] tiles;
     private final int[][] shape;
     private final Image image;
 
     private double maxWidth;
     private double maxHeight;
-
     private final int tileSize;
+
     private double distanceToMove;
     private double distanceToMoveDown;
     private static final double MOVE_SENSITIVITY = 0.1;
@@ -231,5 +233,13 @@ public abstract class Tetrimino extends Actor {
             }
             System.out.println();
         }
+    }
+
+    public boolean isBeingHeld() {
+        return isBeingHeld;
+    }
+
+    public void setBeingHeld(boolean beingHeld) {
+        isBeingHeld = beingHeld;
     }
 }
