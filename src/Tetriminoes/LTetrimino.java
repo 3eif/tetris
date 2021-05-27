@@ -10,6 +10,6 @@ public class LTetrimino extends Tetrimino {
     };
 
     public LTetrimino(int tileSize) {
-        super(width, height, tileSize, shape, "./resources/purple-tile.png");
+        super(width, height, tileSize, shape, "resources/images/orange-tile.png");
     }
 }

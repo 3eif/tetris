@@ -4,14 +4,19 @@ import com.seifabdelaziz.tetris.Engine.World;
 import com.seifabdelaziz.tetris.Tiles.BottomTile;
 import com.seifabdelaziz.tetris.Tiles.MatrixTile;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Line;
 
 public class Matrix {
-    private MatrixTile[][] matrixTiles;
     private int rows;
     private int cols;
     private double x;
     private double y;
     private int tileSize;
+
+    private MatrixTile[][] matrixTiles;
+    private Line leftLine;
+    private Line rightLine;
+    private Line bottomLine;
 
     public Matrix(World world, int rows, int cols, int tileSize, double x, double y, Image matrixTileImage) {
         this.rows = rows;
@@ -39,6 +44,26 @@ public class Matrix {
                 world.add(tile);
             }
         }
+
+        leftLine = new Line();
+        leftLine.setStartX(x);
+        leftLine.setEndX(x);
+        leftLine.setStartY(y);
+        leftLine.setEndY(y + rows * tileSize);
+        leftLine.setStyle("-fx-stroke: white;");
+        rightLine = new Line();
+        rightLine.setStartX(x + cols * tileSize);
+        rightLine.setEndX(x + cols * tileSize);
+        rightLine.setStartY(y);
+        rightLine.setEndY(y + rows * tileSize);
+        rightLine.setStyle("-fx-stroke: white;");
+        bottomLine = new Line();
+        bottomLine.setStartX(x);
+        bottomLine.setEndX(x + cols * tileSize);
+        bottomLine.setStartY(y + rows * tileSize);
+        bottomLine.setEndY(y + rows * tileSize);
+        bottomLine.setStyle("-fx-stroke: white;");
+        world.getChildren().addAll(leftLine, rightLine, bottomLine);
     }
 
     public MatrixTile[][] getMatrixTiles() {
@@ -53,16 +78,8 @@ public class Matrix {
         return x;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
     public double getY() {
         return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
     }
 
     public int getTileSize() {

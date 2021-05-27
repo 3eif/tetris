@@ -10,6 +10,6 @@ public class JTetrimino extends Tetrimino {
     };
 
     public JTetrimino(int tileSize) {
-        super(width, height, tileSize, shape, "./resources/blue-tile.png");
+        super(width, height, tileSize, shape, "resources/images/blue-tile.png");
     }
 }

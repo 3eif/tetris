@@ -13,6 +13,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -23,6 +25,7 @@ public class TetrisWorld extends World {
     private boolean shouldRotate;
     private boolean shouldMoveToNextTile;
     private boolean shouldMoveDown;
+    private boolean shouldMoveToBottom;
     private boolean shouldHold;
     private boolean canHold;
 
@@ -31,10 +34,11 @@ public class TetrisWorld extends World {
     private Tetrimino holdTetrimino;
     private ArrayList<Tetrimino> nextTetriminos = new ArrayList<Tetrimino>(3);
 
-    private final String MATRIX_TILE_IMAGE_PATH = getClass().getClassLoader().getResource("black-tile.png").toString();
+    private final String MATRIX_TILE_IMAGE_PATH = getClass().getClassLoader().getResource("images/black-tile.png").toString();
     private final Image MATRIX_TILE_IMAGE = new Image(MATRIX_TILE_IMAGE_PATH);
 
     private final int TILE_SIZE = 30;
+    private final int NEXT_TETRIMINO_COUNT = 4;
 
     public TetrisWorld() {
         setOnKeyPressed(keyEvent -> {
@@ -44,6 +48,8 @@ public class TetrisWorld extends World {
                 setShouldHold(true);
             if (keyEvent.getCode() == KeyCode.DOWN && !isKeyDown(KeyCode.DOWN))
                 setShouldMoveDown(true);
+            if (keyEvent.getCode() == KeyCode.SPACE && !isKeyDown(KeyCode.SPACE))
+                setShouldMoveToBottom(true);
             if ((keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.RIGHT) &&
                     (!isKeyDown(KeyCode.RIGHT) || !isKeyDown(KeyCode.LEFT)))
                 setShouldMoveToNextTile(true);
@@ -55,29 +61,70 @@ public class TetrisWorld extends World {
 
         holdTetrimino = null;
 
+        Rectangle background = new Rectangle();
+        background.setWidth(scene.getWidth());
+        background.setHeight(scene.getHeight());
+
         Text hold = new Text("Hold");
         hold.setFont(new Font(30));
         hold.setX(25);
         hold.setY(150);
+        getChildren().addAll(background, hold);
 
         matrix = new Matrix(this, 20, 10, TILE_SIZE, (int)(scene.getWidth() / 2) -
-                (int)((getTileSize() * 10) / 2), 0, MATRIX_TILE_IMAGE);
+                (int)((getTileSize() * 10) / 2), (scene.getHeight() - getTileSize() * 20) / 2, MATRIX_TILE_IMAGE);
 
-        score = new Score();
-        score.setX(25);
-        score.setY(25);
-        getChildren().addAll(score, hold);
+        Rectangle holdRectangle = new Rectangle();
+        holdRectangle.setStyle("-fx-stroke: white;");
+        holdRectangle.setStrokeWidth(1);
+        holdRectangle.setWidth(TILE_SIZE * 5);
+        holdRectangle.setHeight(TILE_SIZE * 4);
+        holdRectangle.setX(matrix.getX() - TILE_SIZE * 5);
+        holdRectangle.setY(matrix.getY());
+        Rectangle holdTextRectangle = new Rectangle();
+        holdTextRectangle.setFill(Color.WHITE);
+        holdTextRectangle.setWidth(TILE_SIZE * 5);
+        holdTextRectangle.setHeight(TILE_SIZE);
+        holdTextRectangle.setX(matrix.getX() - TILE_SIZE * 5);
+        holdTextRectangle.setY(matrix.getY());
+        Text holdText = new Text("HOLD");
+        holdText.setX(matrix.getX() - TILE_SIZE * 5 + 5);
+        holdText.setY(matrix.getY() + 23);
+        holdText.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 25));
 
-        for(int i = 0; i < 3; i++) {
+        Rectangle nextRectangle = new Rectangle();
+        nextRectangle.setStyle("-fx-stroke: white;");
+        nextRectangle.setStrokeWidth(1);
+        nextRectangle.setWidth(TILE_SIZE * 5);
+        nextRectangle.setHeight(TILE_SIZE * 15);
+        nextRectangle.setX(matrix.getX() + matrix.getWidth());
+        nextRectangle.setY(matrix.getY());
+        Rectangle nextTextRectangle = new Rectangle();
+        nextTextRectangle.setFill(Color.WHITE);
+        nextTextRectangle.setWidth(TILE_SIZE * 5);
+        nextTextRectangle.setHeight(TILE_SIZE);
+        nextTextRectangle.setX(matrix.getX() + matrix.getWidth());
+        nextTextRectangle.setY(matrix.getY());
+        Text nextText = new Text("NEXT");
+        nextText.setX(matrix.getX() + matrix.getWidth() + 5);
+        nextText.setY(matrix.getY() + 23);
+        nextText.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 25));
+        getChildren().addAll(holdRectangle, holdTextRectangle, holdText, nextRectangle, nextTextRectangle, nextText);
+
+        for(int i = 0; i < NEXT_TETRIMINO_COUNT; i++) {
             Tetrimino tetrimino = (Tetrimino) getRandomTetriminoActor();
-            tetrimino.setX(scene.getWidth() - 100);
-            tetrimino.setY(i * 200 + 10);
             tetrimino.setIsMovable(false);
+            tetrimino.setNext(true);
             add(tetrimino);
             tetrimino.addTiles();
             nextTetriminos.add(i, tetrimino);
         }
         spawnTetrimino();
+
+        score = new Score();
+        score.setX(matrix.getX() - TILE_SIZE * 6);
+        score.setY(matrix.getY() + matrix.getHeight() - 10);
+        getChildren().add(score);
     }
 
     @Override
@@ -90,9 +137,10 @@ public class TetrisWorld extends World {
                 if(actor instanceof Tetrimino) {
                     Tetrimino tetrimino = (Tetrimino) actor;
                     if (tetrimino.isMovable()) {
+                        tetrimino.resetRotation();
                         tetrimino.setIsMovable(false);
-                        tetrimino.setYPos(50);
-                        tetrimino.setXPos(20);
+                        tetrimino.setXPos(matrix.getX() - TILE_SIZE * 2.5 - tetrimino.getMaxWidth() / 2);
+                        tetrimino.setYPos(matrix.getY() + TILE_SIZE * 0.5 + tetrimino.getMaxHeight() / 2);
                         holdTetrimino = tetrimino;
                         holdTetrimino.setBeingHeld(true);
                         break;
@@ -144,7 +192,7 @@ public class TetrisWorld extends World {
                         TetriminoTile tetriminoTile = (TetriminoTile) actor;
                         Tetrimino tetrimino = tetriminoTile.getParentTetrimino();
                         if (!tetrimino.isMovable() && tetriminoTile.getY() < rowYs.get(rowYs.size() - 1) - (int) (TILE_SIZE / 2)
-                                && !tetrimino.isBeingHeld()) {
+                                && !tetrimino.isBeingHeld() && !tetrimino.isNext()) {
                             tetriminoTile.setY(tetriminoTile.getY() + TILE_SIZE * rowYs.size());
                         }
                     }
@@ -179,7 +227,8 @@ public class TetrisWorld extends World {
         if(x % 10 == 5) x -= TILE_SIZE / 2;
 
         tetriminoToSpawn.setIsMovable(true);
-        tetriminoToSpawn.setYPos(matrix.getY());
+        tetriminoToSpawn.setYPos(matrix.getY() - tetriminoToSpawn.getMaxHeight());
+        tetriminoToSpawn.setNext(false);
         tetriminoToSpawn.setXPos(x);
 
         Tetrimino tetriminoToAdd = (Tetrimino) getRandomTetriminoActor();
@@ -189,8 +238,10 @@ public class TetrisWorld extends World {
         nextTetriminos.add(tetriminoToAdd);
 
         for(int i = 0; i < nextTetriminos.size(); i++) {
-            nextTetriminos.get(i).setXPos(700);
-            nextTetriminos.get(i).setYPos(i * 200 + 20);
+            nextTetriminos.get(i).setNext(true);
+            nextTetriminos.get(i).setXPos(matrix.getX() + matrix.getWidth() + TILE_SIZE * 2.5
+                    - nextTetriminos.get(i).getMaxWidth() / 2);
+            nextTetriminos.get(i).setYPos(matrix.getY() + TILE_SIZE * 1.5 + TILE_SIZE * (3.5 * i));
         }
         return tetriminoToSpawn;
     }
@@ -257,5 +308,13 @@ public class TetrisWorld extends World {
 
     public void setShouldMoveDown(boolean shouldMoveDown) {
         this.shouldMoveDown = shouldMoveDown;
+    }
+
+    public boolean getShouldMoveToBottom() {
+        return shouldMoveToBottom;
+    }
+
+    public void setShouldMoveToBottom(boolean shouldMoveToBottom) {
+        this.shouldMoveToBottom = shouldMoveToBottom;
     }
 }

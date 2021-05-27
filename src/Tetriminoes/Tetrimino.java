@@ -1,16 +1,15 @@
 package com.seifabdelaziz.tetris.Tetriminoes;
 
 import com.seifabdelaziz.tetris.Engine.Actor;
-import com.seifabdelaziz.tetris.Tiles.Matrix;
+import com.seifabdelaziz.tetris.Tiles.*;
 import com.seifabdelaziz.tetris.Scenes.TetrisWorld;
-import com.seifabdelaziz.tetris.Tiles.Tile;
-import com.seifabdelaziz.tetris.Tiles.TetriminoTile;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 
 public abstract class Tetrimino extends Actor {
     private boolean isMovable = true;
     private boolean isBeingHeld = false;
+    private boolean isNext = false;
 
     private TetriminoTile[][] tiles;
     private final int[][] shape;
@@ -116,11 +115,27 @@ public abstract class Tetrimino extends Actor {
         if (shouldMoveDown) tetrisWorld.setShouldMoveDown(false);
         if (shouldMoveToNextTile) tetrisWorld.setShouldMoveToNextTile(false);
 
-//        if (getWorld().isKeyDown(KeyCode.SPACE)) {
-//            while(isMovable && getY() + maxHeight < matrix.getHeight() + matrix.getY()) moveVertical(tileSize);
+//        if (tetrisWorld.getShouldMoveToBottom()) {
+//            TetriminoTile tetriminoTile = getOneIntersectingObject(TetriminoTile.class);
+//            while((tetriminoTile == null || tetriminoTile.getParentTetrimino() == this) && isMovable && getY() +
+//                    maxHeight < matrix.getHeight() + matrix.getY()) {
+//                if((getOneIntersectingObject(TetriminoTile.class) != null &&
+//                        getOneIntersectingObject(TetriminoTile.class).getParentTetrimino() != this) ||
+//                        getOneIntersectingObject(BottomTile.class) != null ||
+//                        getOneIntersectingObject(MatrixTile.class) == null) {
+//                    isMovable = false;
+//                    tetrisWorld.spawnTetrimino();
+//                    break;
+//                }
+//                moveVertical(tileSize);
+//            }
+//            tetrisWorld.setShouldMoveToBottom(false);
 //        }
 
-        if (tetrisWorld.getShouldRotate()) rotate();
+        if (tetrisWorld.getShouldRotate()) {
+            rotate();
+            tetrisWorld.setShouldRotate(false);
+        }
 
         if (now - getWorld().getPrev() > (1e6 * 500)) {
             if (getY() + getFitHeight() < getWorld().getHeight()) {
@@ -156,17 +171,33 @@ public abstract class Tetrimino extends Actor {
         double temp = maxHeight;
         maxHeight = maxWidth;
         maxWidth = temp;
-        tetrisWorld.setShouldRotate(false);
 
         // Prevents block from going out of matrix when rotating
         Matrix matrix = tetrisWorld.getMatrix();
         for (TetriminoTile[] tetriminoTiles : tiles) {
             for (Tile tile : tetriminoTiles) {
                 if (tile != null) {
-                    if (tile.getX() < matrix.getX()) moveHorizontal(tileSize);
-                    if (tile.getX() + tileSize > matrix.getX() + matrix.getWidth()) moveHorizontal(-tileSize);
+                    while (tile.getX() < matrix.getX()) moveHorizontal(tileSize);
+                    while (tile.getX() + tileSize > matrix.getX() + matrix.getWidth()) moveHorizontal(-tileSize);
                 }
             }
+        }
+    }
+
+    public void resetRotation() {
+        while(true) {
+            boolean isSame = true;
+            for (int r = 0; r < tiles.length; r++) {
+                for (int c = 0; c < tiles[r].length; c++) {
+                    if (!(shape[r][c] == 1 && tiles[r][c] != null) && !(shape[r][c] == 0 && tiles[r][c] == null)) {
+                        isSame = false;
+                        break;
+                    }
+                }
+                if(!isSame) break;
+            }
+            if(isSame) break;
+            else rotate();
         }
     }
 
@@ -248,5 +279,13 @@ public abstract class Tetrimino extends Actor {
 
     public void setBeingHeld(boolean beingHeld) {
         isBeingHeld = beingHeld;
+    }
+
+    public boolean isNext() {
+        return isNext;
+    }
+
+    public void setNext(boolean next) {
+        isNext = next;
     }
 }

@@ -29,14 +29,37 @@ public class TetriminoTile extends Tile {
         return intersectingObject;
     }
 
+    public <A extends Actor> A getObjectContaining(java.lang.Class<A> cls) {
+        A intersectingObject = null;
+        ObservableList<Node> actors = getParent().getChildrenUnmodifiable();
+        for (Node actor : actors) {
+            if (actor != this && cls.isInstance(actor) && (actor.contains(getX() + (getWidth() / 2), getY()) &&
+                    actor.contains(getX() + (getWidth() / 2), getY() + getHeight() / 2))) {
+                intersectingObject = (A) actor;
+                break;
+            }
+        }
+        return intersectingObject;
+    }
+
     @Override
     public void act(long now) {
+        TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
+
+        MatrixTile matrixTile = getObjectContaining(MatrixTile.class);
+        TetriminoTile tetriminoTileContaining = getObjectContaining(TetriminoTile.class);
+//        if(!parentTetrimino.isBeingHeld() && !parentTetrimino.isNext() &&
+//                tetriminoTileContaining != null && !parentTetrimino.isMovable())
+//            parentTetrimino.moveVertical(-tetrisWorld.getTileSize());
+
         TetriminoTile tetriminoTile = getOneIntersectingObject(TetriminoTile.class);
         if(tetriminoTile != null && tetriminoTile.getParentTetrimino() != parentTetrimino && parentTetrimino.isMovable()) {
-            TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
             parentTetrimino.setIsMovable(false);
             tetrisWorld.spawnTetrimino();
         }
+
+        if(!parentTetrimino.isBeingHeld() && !parentTetrimino.isNext() && matrixTile == null && !parentTetrimino.isMovable())
+            parentTetrimino.moveVertical(-tetrisWorld.getTileSize());
     }
 
     public Tetrimino getParentTetrimino() {

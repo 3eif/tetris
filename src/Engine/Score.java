@@ -1,5 +1,6 @@
 package com.seifabdelaziz.tetris.Engine;
 
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -8,7 +9,8 @@ public class Score extends Text{
 
     public Score() {
         scoreVal = 0;
-        setFont(new Font(30));
+        setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 30));
+        setFill(Color.WHITE);
         updateDisplay();
     }
 

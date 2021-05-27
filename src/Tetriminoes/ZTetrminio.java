@@ -10,6 +10,6 @@ public class ZTetrminio extends Tetrimino {
     };
 
     public ZTetrminio(int tileSize) {
-        super(width, height, tileSize, shape, "./resources/red-tile.png");
+        super(width, height, tileSize, shape, "resources/images/red-tile.png");
     }
 }
