@@ -3,6 +3,7 @@ package com.seifabdelaziz.tetris.Engine;
 import javafx.animation.AnimationTimer;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 
@@ -14,6 +15,11 @@ public abstract class World extends Pane {
     private double mouseX = 0;
     private long prev = 0;
     HashSet<KeyCode> keyCodes = new HashSet<KeyCode>();
+
+    public final String MATRIX_TILE_IMAGE_PATH = getClass().getClassLoader().getResource("images/black-tile.png").toString();
+    public final Image MATRIX_TILE_IMAGE = new Image(MATRIX_TILE_IMAGE_PATH);
+
+    public final int TILE_SIZE = 30;
 
     public World() {
         timer = new AnimationTimer() {

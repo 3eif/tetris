@@ -34,10 +34,6 @@ public class TetrisWorld extends World {
     private Tetrimino holdTetrimino;
     private ArrayList<Tetrimino> nextTetriminos = new ArrayList<Tetrimino>(3);
 
-    private final String MATRIX_TILE_IMAGE_PATH = getClass().getClassLoader().getResource("images/black-tile.png").toString();
-    private final Image MATRIX_TILE_IMAGE = new Image(MATRIX_TILE_IMAGE_PATH);
-
-    private final int TILE_SIZE = 30;
     private final int NEXT_TETRIMINO_COUNT = 4;
 
     public TetrisWorld() {
@@ -150,7 +146,7 @@ public class TetrisWorld extends World {
 
             if(tetriminoToSpawn != null) {
                 int x = (int) (matrix.getX() + (matrix.getWidth() / 2) - (tetriminoToSpawn.getMaxWidth() / 2));
-                if(x % 10 == 5) x -= TILE_SIZE / 2;
+                x -= x % 30 - TILE_SIZE / 2;
                 tetriminoToSpawn.setXPos(x);
                 tetriminoToSpawn.setYPos(matrix.getY());
                 tetriminoToSpawn.setIsMovable(true);
@@ -224,7 +220,7 @@ public class TetrisWorld extends World {
         canHold = true;
 
         int x = (int) (matrix.getX() + (matrix.getWidth() / 2) - (tetriminoToSpawn.getMaxWidth() / 2));
-        if(x % 10 == 5) x -= TILE_SIZE / 2;
+        x -= x % 30 - TILE_SIZE / 2;
 
         tetriminoToSpawn.setIsMovable(true);
         tetriminoToSpawn.setYPos(matrix.getY() - tetriminoToSpawn.getMaxHeight());

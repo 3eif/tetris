@@ -61,6 +61,16 @@ public abstract class Tetrimino extends Actor {
         }
     }
 
+    public void removeTiles() {
+        for(int r = 0; r < tiles.length; r++) {
+            for(int c = 0; c < tiles[r].length; c++) {
+                if(tiles[r][c] != null) {
+                    getWorld().remove(tiles[r][c]);
+                }
+            }
+        }
+    }
+
     @Override
     public void act(long now) {
         if(!isMovable) return;

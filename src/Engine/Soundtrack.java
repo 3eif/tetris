@@ -34,4 +34,12 @@ public class Soundtrack {
             soundtrackPlayer.setOnEndOfMedia(() -> {});
         }
     }
+
+    public void mute(boolean mute) {
+        soundtrackPlayer.setMute(mute);
+    }
+
+    public boolean isMute() {
+        return soundtrackPlayer.isMute();
+    }
 }

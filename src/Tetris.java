@@ -23,7 +23,7 @@ public class Tetris extends Application {
         GameManager gameManager = GameManager.getInstance();
         gameManager.setHighScore(100); // TODO: Change this when you implement storing high scores in txt file or local db
         gameManager.setRoot(root);
-        Scene scene = new Scene(root, 1000, 800);
+        Scene scene = new Scene(root, 1050, 810);
         gameManager.setGame(scene);
         gameManager.setSoundtrack(new Soundtrack("./resources/audio/tetris.mp3")); // TODO: Make looping sound better
 
