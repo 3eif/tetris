@@ -1,7 +1,11 @@
 package com.seifabdelaziz.tetris.Engine;
 
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
+
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class GameManager {
     private static final GameManager instance = new GameManager();
@@ -25,6 +29,14 @@ public class GameManager {
 
     public void setHighScore(int highScore) {
         this.highScore = highScore;
+
+        try {
+            FileWriter writer = new FileWriter("highscore.txt");
+            writer.write(String.valueOf(highScore), 0, String.valueOf(highScore).length());
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
     }
 
     public World getCurrentScene() {

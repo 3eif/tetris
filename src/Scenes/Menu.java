@@ -38,20 +38,32 @@ public class Menu extends World {
         Matrix matrix = new Matrix(this, (int) (scene.getHeight() / TILE_SIZE),
                 (int) (scene.getWidth() / TILE_SIZE), TILE_SIZE, 0, 0, MATRIX_TILE_IMAGE);
 
-        BorderPane titleTextBorderPane = new BorderPane();
+        BorderPane titleBorderPane = new BorderPane();
+        VBox titleVBox = new VBox();
+        titleVBox.setAlignment(Pos.CENTER);
+
         Text titleText = new Text("Tetris");
         titleText.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 100));
         Reflection ref = new Reflection();
-        ref.setTopOpacity(0.4);
-        ref.setTopOffset(0.5);
-        ref.setBottomOpacity(0.05);
+        ref.setTopOpacity(0.5);
+        ref.setBottomOpacity(0);
         titleText.setEffect(ref);
         titleText.setFill(Color.WHITE);
         titleText.setX(50);
         titleText.setY(100);
-        titleTextBorderPane.setCenter(titleText);
-        titleTextBorderPane.setPadding(new Insets(TILE_SIZE, 0, 0, 0));
-        menuBorderPane.setTop(titleTextBorderPane);
+
+        BorderPane highscoreBorderPane = new BorderPane();
+        Score highscore = new Score("Highscore: ");
+        highscore.setEffect(ref);
+        highscore.setScoreVal(gameManager.getHighScore());
+        highscoreBorderPane.setCenter(highscore);
+        highscoreBorderPane.setPadding(new Insets(150, 0, 0, 0));
+
+        titleVBox.getChildren().addAll(titleText, highscoreBorderPane);
+        titleBorderPane.setCenter(titleVBox);
+
+        titleBorderPane.setPadding(new Insets(TILE_SIZE, 0, 0, 0));
+        menuBorderPane.setTop(titleBorderPane);
 
         VBox buttonsHBox = new VBox();
         buttonsHBox.setSpacing(20);

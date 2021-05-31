@@ -6,8 +6,10 @@ import javafx.scene.text.Text;
 
 public class Score extends Text{
     private int scoreVal;
+    private String preText;
 
-    public Score() {
+    public Score(String preText) {
+        this.preText = preText;
         scoreVal = 0;
         setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 30));
         setFill(Color.WHITE);
@@ -15,7 +17,7 @@ public class Score extends Text{
     }
 
     public void updateDisplay() {
-        this.setText("Score: " + scoreVal);
+        this.setText(preText + scoreVal);
     }
 
     public int getScoreVal() {

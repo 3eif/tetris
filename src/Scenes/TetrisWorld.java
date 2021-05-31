@@ -31,6 +31,7 @@ public class TetrisWorld extends World {
 
     private Matrix matrix;
     private Score score;
+    private Score highscore;
     private Tetrimino holdTetrimino;
     private ArrayList<Tetrimino> nextTetriminos = new ArrayList<Tetrimino>(3);
 
@@ -53,7 +54,8 @@ public class TetrisWorld extends World {
         });
         setOnKeyReleased(keyEvent -> removeKeyCode(keyEvent.getCode()));
 
-        Scene scene = GameManager.getInstance().getGame();
+        GameManager gameManager = GameManager.getInstance();
+        Scene scene = gameManager.getGame();
 
         holdTetrimino = null;
 
@@ -117,14 +119,20 @@ public class TetrisWorld extends World {
         }
         spawnTetrimino();
 
-        score = new Score();
-        score.setX(matrix.getX() - TILE_SIZE * 6);
+        highscore = new Score("Highscore: ");
+        highscore.setX(matrix.getX() + matrix.getWidth() + TILE_SIZE / 2);
+        highscore.setY(matrix.getY() + matrix.getHeight() - 50);
+        highscore.setScoreVal(gameManager.getHighScore());
+        score = new Score("Score: ");
+        score.setX(matrix.getX() + matrix.getWidth() + TILE_SIZE / 2);
         score.setY(matrix.getY() + matrix.getHeight() - 10);
-        getChildren().add(score);
+        getChildren().addAll(score, highscore);
     }
 
     @Override
     public void act(long now) {
+        GameManager gameManager = GameManager.getInstance();
+
         if (isKeyDown(KeyCode.C) && shouldHold && canHold) {
             Tetrimino tetriminoToSpawn = holdTetrimino;
 
@@ -210,6 +218,10 @@ public class TetrisWorld extends World {
                     scoreToAdd = 800;
             }
             if (scoreToAdd > 0) score.setScoreVal(score.getScoreVal() + scoreToAdd);
+            if(score.getScoreVal() > gameManager.getHighScore()) {
+                gameManager.setHighScore(score.getScoreVal());
+                highscore.setScoreVal(gameManager.getHighScore());
+            }
         }
     }
 
