@@ -100,7 +100,7 @@ public class Menu extends World {
                 soundtrack.isMute() ? muteButtonImage : unMuteButtonImage);
         muteButton.setPadding(new Insets(0, 0, TILE_SIZE, TILE_SIZE));
         muteButton.setOnMouseClicked(keyEvent -> {
-            soundtrack.mute(!soundtrack.isMute());
+            gameManager.setMusic(soundtrack.isMute());
         });
         muteButtonPane.setLeft(muteButton);
         menuBorderPane.setBottom(muteButtonPane);

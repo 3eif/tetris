@@ -6,6 +6,8 @@ import com.seifabdelaziz.tetris.Scenes.TetrisWorld;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 
+import java.util.ArrayList;
+
 public abstract class Tetrimino extends Actor {
     private boolean isMovable = true;
     private boolean isBeingHeld = false;
@@ -77,27 +79,40 @@ public abstract class Tetrimino extends Actor {
         TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
         Matrix matrix = tetrisWorld.getMatrix();
 
+        ArrayList<TetriminoTile> tetriminosToSide = new ArrayList<>();
         double xOfFirstTile = Integer.MAX_VALUE;
         double yOfFirstTile = Integer.MAX_VALUE;
         for (TetriminoTile[] tetriminoTiles : tiles) {
-            for (Tile tile : tetriminoTiles) {
+            for (TetriminoTile tile : tetriminoTiles) {
                 if (tile != null) {
                     if (tile.getX() < xOfFirstTile) xOfFirstTile = tile.getX();
                     if (tile.getY() < yOfFirstTile) yOfFirstTile = tile.getY();
+
+                    TetriminoTile tileToSide = tile.getTetriminoTileToSide();
+                    if(tileToSide != null) tetriminosToSide.add(tileToSide);
                 }
             }
         }
 
+        if(tetriminosToSide.size() > 0) System.out.println("My tile: " + xOfFirstTile + ". Other tile: " + tetriminosToSide.get(0).getX());
+
+        boolean isTetriminoToRight = false;
+        boolean isTetriminoToLeft = false;
+        for (TetriminoTile tetriminoTile : tetriminosToSide) {
+            if (tetriminoTile.getX() < xOfFirstTile) isTetriminoToLeft = true;
+            if (tetriminoTile.getX() > xOfFirstTile) isTetriminoToRight = true;
+        }
+
         // Controls how fast you can move your tetrimino.
         boolean shouldMoveToNextTile = tetrisWorld.getShouldMoveToNextTile();
-        if (getWorld().isKeyDown(KeyCode.RIGHT) && xOfFirstTile + maxWidth < matrix.getWidth() + matrix.getX()) {
+        if (!isTetriminoToRight && getWorld().isKeyDown(KeyCode.RIGHT) && xOfFirstTile + maxWidth < matrix.getWidth() + matrix.getX()) {
             distanceToMove = shouldMoveToNextTile ? tileSize : distanceToMove + MOVE_SENSITIVITY;
             if (distanceToMove == tileSize) {
                 moveHorizontal(distanceToMove);
                 distanceToMove = 0;
             }
         }
-        if (getWorld().isKeyDown(KeyCode.LEFT) && xOfFirstTile - tileSize >= matrix.getX()) {
+        if (!isTetriminoToLeft && getWorld().isKeyDown(KeyCode.LEFT) && xOfFirstTile - tileSize >= matrix.getX()) {
             distanceToMove = shouldMoveToNextTile ? -tileSize : distanceToMove - MOVE_SENSITIVITY;
             if (distanceToMove == -tileSize) {
                 moveHorizontal(distanceToMove);

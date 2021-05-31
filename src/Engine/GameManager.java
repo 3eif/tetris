@@ -1,7 +1,6 @@
 package com.seifabdelaziz.tetris.Engine;
 
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 
 import java.io.FileWriter;
@@ -29,14 +28,10 @@ public class GameManager {
 
     public void setHighScore(int highScore) {
         this.highScore = highScore;
+        boolean s = soundtrack == null || soundtrack.isMute();
 
-        try {
-            FileWriter writer = new FileWriter("highscore.txt");
-            writer.write(String.valueOf(highScore), 0, String.valueOf(highScore).length());
-            writer.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        }
+        StringBuilder db = new StringBuilder("Highscore: " + highScore + "\nMusic: " + (!s ? "ON" : "OFF"));
+        writeToDb(db);
     }
 
     public World getCurrentScene() {
@@ -73,5 +68,26 @@ public class GameManager {
         soundtrack.play();
         soundtrack.loop(true);
         soundtrack.setVolume(0.1);
+    }
+
+    public boolean music() {
+        return soundtrack.isMute();
+    }
+
+    public void setMusic(boolean music) {
+        soundtrack.mute(!music);
+
+        StringBuilder db = new StringBuilder("Highscore: " + getHighScore() + "\nMusic: " + (music ? "ON" : "OFF"));
+        writeToDb(db);
+    }
+
+    private void writeToDb(StringBuilder data) {
+        try{
+            FileWriter writer = new FileWriter("db.txt");
+            writer.write(String.valueOf(data), 0, data.length());
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
     }
 }

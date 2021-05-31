@@ -7,6 +7,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 
+import java.util.ArrayList;
+
 public class TetriminoTile extends Tile {
     private Tetrimino parentTetrimino;
 
@@ -37,6 +39,21 @@ public class TetriminoTile extends Tile {
                     actor.contains(getX() + (getWidth() / 2), getY() + getHeight() / 2))) {
                 intersectingObject = (A) actor;
                 break;
+            }
+        }
+        return intersectingObject;
+    }
+
+    public <A extends Actor> A getTetriminoTileToSide() {
+        A intersectingObject = null;
+        ObservableList<Node> actors = getParent().getChildrenUnmodifiable();
+        for (Node actor : actors) {
+            if (actor != this && actor instanceof TetriminoTile && intersects(actor.getBoundsInLocal())) {
+                TetriminoTile tile = (TetriminoTile) actor;
+                if(tile.getParentTetrimino() != parentTetrimino && tile.getY() == getY()){
+                    intersectingObject = (A) actor;
+                    break;
+                }
             }
         }
         return intersectingObject;

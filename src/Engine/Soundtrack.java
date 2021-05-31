@@ -27,9 +27,7 @@ public class Soundtrack {
 
     public void loop(boolean loop) {
         if(loop) {
-            soundtrackPlayer.setOnEndOfMedia(() -> {
-                soundtrackPlayer.seek(Duration.ZERO);
-            });
+            soundtrackPlayer.setOnEndOfMedia(() -> soundtrackPlayer.seek(Duration.ZERO));
         } else {
             soundtrackPlayer.setOnEndOfMedia(() -> {});
         }
