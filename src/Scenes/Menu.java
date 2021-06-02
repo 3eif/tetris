@@ -43,7 +43,7 @@ public class Menu extends World {
         titleVBox.setAlignment(Pos.CENTER);
 
         Text titleText = new Text("Tetris");
-        titleText.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 100));
+        titleText.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 80));
         Reflection ref = new Reflection();
         ref.setTopOpacity(0.5);
         ref.setBottomOpacity(0);
@@ -57,11 +57,10 @@ public class Menu extends World {
         highscore.setEffect(ref);
         highscore.setScoreVal(gameManager.getHighScore());
         highscoreBorderPane.setCenter(highscore);
-        highscoreBorderPane.setPadding(new Insets(150, 0, 0, 0));
+        highscoreBorderPane.setPadding(new Insets(100, 0, 0, 0));
 
         titleVBox.getChildren().addAll(titleText, highscoreBorderPane);
         titleBorderPane.setCenter(titleVBox);
-
         titleBorderPane.setPadding(new Insets(TILE_SIZE, 0, 0, 0));
         menuBorderPane.setTop(titleBorderPane);
 
@@ -87,6 +86,13 @@ public class Menu extends World {
         howToPlayButton.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 25));
         howToPlayButton.setTextFill(Color.WHITE);
 
+        Image creditsButtonImage = new Image("resources/images/grey_button03.png");
+        Image creditsButtonImageClick = new Image("resources/images/grey_button04.png");
+        MyButton creditsButton = new MyButton("Credits", creditsButtonImage,
+                creditsButtonImageClick, Credits.class);
+        creditsButton.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 25));
+        creditsButton.setTextFill(Color.GREY);
+
         Image quitButtonImage = new Image("resources/images/red_button01.png");
         Image quitButtonImageClick = new Image("resources/images/red_button02.png");
         MyButton quitButton = new MyButton("Quit", quitButtonImage,
@@ -94,7 +100,7 @@ public class Menu extends World {
         quitButton.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 25));
         quitButton.setTextFill(Color.WHITE);
 
-        buttonsHBox.getChildren().addAll(playButton, optionsButton, howToPlayButton, quitButton);
+        buttonsHBox.getChildren().addAll(playButton, optionsButton, howToPlayButton, creditsButton, quitButton);
         buttonsHBox.setAlignment(Pos.CENTER);
         menuBorderPane.setCenter(buttonsHBox);
 

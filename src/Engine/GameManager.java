@@ -1,5 +1,6 @@
 package com.seifabdelaziz.tetris.Engine;
 
+import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 
@@ -15,6 +16,8 @@ public class GameManager {
     private Scene game;
 
     private Soundtrack soundtrack;
+
+    private Application application;
 
     private GameManager() {}
 
@@ -89,5 +92,13 @@ public class GameManager {
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
+    }
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
     }
 }
