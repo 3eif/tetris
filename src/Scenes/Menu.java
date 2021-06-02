@@ -66,29 +66,35 @@ public class Menu extends World {
         menuBorderPane.setTop(titleBorderPane);
 
         VBox buttonsHBox = new VBox();
-        buttonsHBox.setSpacing(20);
+        buttonsHBox.setSpacing(15);
 
-        Image playButtonImage = new Image("resources/images/blue_button00.png");
-        Image playButtonImageClick = new Image("resources/images/blue_button01.png");
+        Image playButtonImage = new Image("resources/images/blue_button04.png");
+        Image playButtonImageClick = new Image("resources/images/blue_button05.png");
         MyButton playButton = new MyButton("Play", playButtonImage, playButtonImageClick, TetrisWorld.class);
         playButton.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 30));
         playButton.setTextFill(Color.WHITE);
 
-        Image howToPlayButtonImage = new Image("resources/images/green_button00.png");
-        Image howToPlayButtonImageClick = new Image("resources/images/green_button01.png");
+        Image optionsButtonImage = new Image("resources/images/yellow_button04.png");
+        Image optionsButtonImageClick = new Image("resources/images/yellow_button05.png");
+        MyButton optionsButton = new MyButton("Options", optionsButtonImage, optionsButtonImageClick, Options.class);
+        optionsButton.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 30));
+        optionsButton.setTextFill(Color.WHITE);
+
+        Image howToPlayButtonImage = new Image("resources/images/green_button04.png");
+        Image howToPlayButtonImageClick = new Image("resources/images/green_button05.png");
         MyButton howToPlayButton = new MyButton("How to Play", howToPlayButtonImage,
                 howToPlayButtonImageClick, HowToPlay.class);
         howToPlayButton.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 25));
         howToPlayButton.setTextFill(Color.WHITE);
 
-        Image quitButtonImage = new Image("resources/images/red_button00.png");
-        Image quitButtonImageClick = new Image("images/red_button00.png");
+        Image quitButtonImage = new Image("resources/images/red_button01.png");
+        Image quitButtonImageClick = new Image("resources/images/red_button02.png");
         MyButton quitButton = new MyButton("Quit", quitButtonImage,
                 quitButtonImageClick, Quit.class);
         quitButton.setFont(Font.loadFont("file:resources/fonts/Kenney Mini Square.ttf", 25));
         quitButton.setTextFill(Color.WHITE);
 
-        buttonsHBox.getChildren().addAll(playButton, howToPlayButton, quitButton);
+        buttonsHBox.getChildren().addAll(playButton, optionsButton, howToPlayButton, quitButton);
         buttonsHBox.setAlignment(Pos.CENTER);
         menuBorderPane.setCenter(buttonsHBox);
 

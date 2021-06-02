@@ -94,8 +94,6 @@ public abstract class Tetrimino extends Actor {
             }
         }
 
-        if(tetriminosToSide.size() > 0) System.out.println("My tile: " + xOfFirstTile + ". Other tile: " + tetriminosToSide.get(0).getX());
-
         boolean isTetriminoToRight = false;
         boolean isTetriminoToLeft = false;
         for (TetriminoTile tetriminoTile : tetriminosToSide) {

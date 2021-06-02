@@ -1,2 +1,2 @@
-Highscore: 100
+Highscore: 1500
 Music: OFF

@@ -41,7 +41,7 @@ public class TetrisWorld extends World {
         setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.UP && !isKeyDown(KeyCode.UP))
                 setShouldRotate(true);
-            if (keyEvent.getCode() == KeyCode.C && !isKeyDown(KeyCode.C))
+            if (keyEvent.getCode() == KeyCode.X && !isKeyDown(KeyCode.X))
                 setShouldHold(true);
             if (keyEvent.getCode() == KeyCode.DOWN && !isKeyDown(KeyCode.DOWN))
                 setShouldMoveDown(true);
@@ -133,7 +133,7 @@ public class TetrisWorld extends World {
     public void act(long now) {
         GameManager gameManager = GameManager.getInstance();
 
-        if (isKeyDown(KeyCode.C) && shouldHold && canHold) {
+        if (isKeyDown(KeyCode.X) && shouldHold && canHold) {
             Tetrimino tetriminoToSpawn = holdTetrimino;
 
             ObservableList<Node> actors = getChildrenUnmodifiable();
