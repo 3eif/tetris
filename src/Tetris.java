@@ -66,7 +66,6 @@ public class Tetris extends Application {
                 while(in.hasNext()) {
                     String nextLine = in.nextLine();
                     if(nextLine.contains(key)) {
-                        System.out.println(Double.parseDouble(nextLine.replaceAll(key + ": ", "")));
                         return nextLine.replaceAll(key + ": ", "");
                     }
                 }
