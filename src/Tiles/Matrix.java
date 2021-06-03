@@ -1,10 +1,10 @@
 package com.seifabdelaziz.tetris.Tiles;
 
 import com.seifabdelaziz.tetris.Engine.World;
-import com.seifabdelaziz.tetris.Tiles.BottomTile;
-import com.seifabdelaziz.tetris.Tiles.MatrixTile;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Line;
+
+import java.util.ArrayList;
 
 public class Matrix {
     private int rows;
@@ -39,11 +39,13 @@ public class Matrix {
             }
         }
 
+        ArrayList<MatrixTile> matrixTilesToAdd = new ArrayList<>();
         for (MatrixTile[] matrixTile : matrixTiles) {
             for (MatrixTile tile : matrixTile) {
-                world.add(tile);
+                matrixTilesToAdd.add(tile);
             }
         }
+        world.getChildren().addAll(matrixTilesToAdd);
 
         leftLine = new Line();
         leftLine.setStartX(x);
@@ -68,10 +70,6 @@ public class Matrix {
 
     public MatrixTile[][] getMatrixTiles() {
         return matrixTiles;
-    }
-
-    public void setMatrixTiles(MatrixTile[][] matrixTiles) {
-        this.matrixTiles = matrixTiles;
     }
 
     public double getX() {

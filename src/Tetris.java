@@ -26,13 +26,16 @@ public class Tetris extends Application {
         BorderPane root = new BorderPane();
 
         GameManager gameManager = GameManager.getInstance();
-        gameManager.setHighScore(getHighscore()); // TODO: Change this when you implement storing high scores in txt file or local db
+        gameManager.setHighScore(Integer.parseInt(readKey("Highscore", "0")), false);
         gameManager.setRoot(root);
         gameManager.setApplication(this);
         Scene scene = new Scene(root, 1050, 810);
         gameManager.setGame(scene);
         gameManager.setSoundtrack(new Soundtrack("./resources/audio/tetris.mp3")); // TODO: Make looping sound better
-        gameManager.setMusic(getMusic());
+        gameManager.setMusicVolume(Double.parseDouble(readKey("Music",
+                String.valueOf(GameManager.defaultMusicVolume))), false);
+        gameManager.setSoundEffectsVolume(Double.parseDouble(readKey("Sound Effects",
+                String.valueOf(GameManager.defaultSoundEffectsVolume))), false);
 
         stage.setScene(scene);
         stage.show();
@@ -43,7 +46,8 @@ public class Tetris extends Application {
     }
 
     public void setUpDb() {
-        StringBuilder db = new StringBuilder("Highscore: 0\nMusic: ON");
+        StringBuilder db = new StringBuilder("Highscore: 0\nMusic: " + GameManager.defaultMusicVolume + "\nSound" +
+                " Effects: " + GameManager.defaultSoundEffectsVolume);
         try{
             FileWriter writer = new FileWriter("db.txt");
             writer.write(String.valueOf(db), 0, db.length());
@@ -53,7 +57,7 @@ public class Tetris extends Application {
         }
     }
 
-    public boolean getMusic() {
+    public String readKey(String key, String def) {
         try {
             try {
                 File file = new File("db.txt");
@@ -61,42 +65,20 @@ public class Tetris extends Application {
 
                 while(in.hasNext()) {
                     String nextLine = in.nextLine();
-                    if(nextLine.contains("Music"))
-                        return nextLine.replaceAll("Music: ", "").equals("ON");
-                }
-
-                setUpDb();
-                return true;
-            } catch(FileNotFoundException e) {
-                setUpDb();
-            }
-        } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        }
-        return true;
-    }
-
-    public int getHighscore() {
-        try {
-            try {
-                File file = new File("db.txt");
-                Scanner in = new Scanner(file);
-
-                while(in.hasNextLine()) {
-                    String nextLine = in.nextLine();
-                    if(nextLine.contains("Highscore")) {
-                        return Integer.parseInt(nextLine.replaceAll("Highscore: ", ""));
+                    if(nextLine.contains(key)) {
+                        System.out.println(Double.parseDouble(nextLine.replaceAll(key + ": ", "")));
+                        return nextLine.replaceAll(key + ": ", "");
                     }
                 }
 
                 setUpDb();
-                return 0;
+                return def;
             } catch(FileNotFoundException e) {
                 setUpDb();
             }
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
-        return 0;
+        return def;
     }
 }

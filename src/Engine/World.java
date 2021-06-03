@@ -12,8 +12,9 @@ import java.util.HashSet;
 
 public abstract class World extends Pane {
     AnimationTimer timer;
-    private double mouseX = 0;
     private long prev = 0;
+    private boolean isPaused = false;
+    private boolean isGameOver = false;
     HashSet<KeyCode> keyCodes = new HashSet<KeyCode>();
 
     public final String MATRIX_TILE_IMAGE_PATH = getClass().getClassLoader().getResource("images/black-tile.png").toString();
@@ -26,17 +27,20 @@ public abstract class World extends Pane {
             @Override
             public void handle(long now) {
                 act(now);
+                if(isGameOver) timer.stop();
 
-                ObservableList<Node> children = getChildren();
-                for (int i = 0; i < children.size(); i++) {
-                    if (children.get(i) instanceof Actor) {
-                        Actor a = (Actor) (children.get(i));
-                        a.act(now);
+                if(!isPaused) {
+                    ObservableList<Node> children = getChildren();
+                    for (Node child : children) {
+                        if (child instanceof Actor) {
+                            Actor a = (Actor) child;
+                            a.act(now);
+                        }
                     }
-                }
 
-                if (now - prev > (1e6 * 500)) {
-                    prev = now;
+                    if (now - prev > (1e6 * 500)) {
+                        prev = now;
+                    }
                 }
             }
         };
@@ -82,15 +86,23 @@ public abstract class World extends Pane {
         return objects;
     }
 
-    public double getMouseX() {
-        return mouseX;
-    }
-
-    public void setMouseX(double mouseX) {
-        this.mouseX = mouseX;
-    }
-
     public long getPrev() {
         return prev;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void setPaused(boolean paused) {
+        isPaused = paused;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
     }
 }

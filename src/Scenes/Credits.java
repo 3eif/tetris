@@ -5,8 +5,6 @@ import com.seifabdelaziz.tetris.Engine.MyButton;
 import com.seifabdelaziz.tetris.Engine.World;
 import com.seifabdelaziz.tetris.Tiles.Matrix;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,7 +19,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 public class Credits extends World {
     public Credits() {
@@ -34,8 +31,8 @@ public class Credits extends World {
         menuBorderPane.setMinWidth(scene.getWidth());
         menuBorderPane.setMinHeight(scene.getHeight());
 
-        Matrix matrix = new Matrix(this, (int) (scene.getHeight() / TILE_SIZE),
-                (int) (scene.getWidth() / TILE_SIZE), TILE_SIZE, 0, 0, MATRIX_TILE_IMAGE);
+        new Matrix(this, (int) (scene.getHeight() / TILE_SIZE), (int) (scene.getWidth() / TILE_SIZE),
+                TILE_SIZE, 0, 0, MATRIX_TILE_IMAGE);
 
         BorderPane titleBorderPane = new BorderPane();
         Text titleText = new Text("Credits");
@@ -105,7 +102,5 @@ public class Credits extends World {
     }
 
     @Override
-    public void act(long now) {
-
-    }
+    public void act(long now) { }
 }

@@ -5,18 +5,20 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 
 import java.io.FileWriter;
-import java.io.IOException;
 
 public class GameManager {
     private static final GameManager instance = new GameManager();
+
+    public static double defaultMusicVolume = 0.5;
+    public static double defaultSoundEffectsVolume = 0.7;
+
     private int highScore;
+    private double soundEffectsVolume;
 
     private World currentScene;
     private BorderPane root;
     private Scene game;
-
     private Soundtrack soundtrack;
-
     private Application application;
 
     private GameManager() {}
@@ -29,12 +31,9 @@ public class GameManager {
         return highScore;
     }
 
-    public void setHighScore(int highScore) {
+    public void setHighScore(int highScore, boolean shouldWriteToDb) {
         this.highScore = highScore;
-        boolean s = soundtrack == null || soundtrack.isMute();
-
-        StringBuilder db = new StringBuilder("Highscore: " + highScore + "\nMusic: " + (!s ? "ON" : "OFF"));
-        writeToDb(db);
+        if(shouldWriteToDb) writeToDb();
     }
 
     public World getCurrentScene() {
@@ -73,18 +72,27 @@ public class GameManager {
         soundtrack.setVolume(0.1);
     }
 
-    public boolean music() {
-        return soundtrack.isMute();
+    public double getMusicVolume() {
+        return soundtrack.getVolume();
     }
 
-    public void setMusic(boolean music) {
-        soundtrack.mute(!music);
-
-        StringBuilder db = new StringBuilder("Highscore: " + getHighScore() + "\nMusic: " + (music ? "ON" : "OFF"));
-        writeToDb(db);
+    public void setMusicVolume(double volume, boolean shouldWriteToDb) {
+        soundtrack.setVolume(volume);
+        if(shouldWriteToDb) writeToDb();
     }
 
-    private void writeToDb(StringBuilder data) {
+    public double getSoundEffectsVolume() {
+        return soundEffectsVolume;
+    }
+
+    public void setSoundEffectsVolume(double volume, boolean shouldWriteToDb) {
+        soundEffectsVolume = volume;
+        if(shouldWriteToDb) writeToDb();
+    }
+
+    private void writeToDb() {
+        StringBuilder data = new StringBuilder("Highscore: " + getHighScore() + "\nMusic: " + getMusicVolume() +
+                "\nSound Effects: " + soundEffectsVolume);
         try{
             FileWriter writer = new FileWriter("db.txt");
             writer.write(String.valueOf(data), 0, data.length());

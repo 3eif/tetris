@@ -21,8 +21,12 @@ public class Soundtrack {
         soundtrackPlayer.stop();
     }
 
+    public double getVolume() {
+        return soundtrackPlayer.getVolume();
+    }
+
     public void setVolume(double volume) {
-        soundtrackPlayer.setVolume(volume);
+        soundtrackPlayer.setVolume(volume * 0.10);
     }
 
     public void loop(boolean loop) {
@@ -31,13 +35,5 @@ public class Soundtrack {
         } else {
             soundtrackPlayer.setOnEndOfMedia(() -> {});
         }
-    }
-
-    public void mute(boolean mute) {
-        soundtrackPlayer.setMute(mute);
-    }
-
-    public boolean isMute() {
-        return soundtrackPlayer.isMute();
     }
 }

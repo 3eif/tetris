@@ -4,9 +4,7 @@ import com.seifabdelaziz.tetris.Engine.World;
 import javafx.application.Platform;
 
 public class Quit extends World {
-    public Quit() {
-
-    }
+    public Quit() { }
 
     @Override
     public void act(long now) {

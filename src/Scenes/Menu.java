@@ -3,19 +3,15 @@ package com.seifabdelaziz.tetris.Scenes;
 import com.seifabdelaziz.tetris.Engine.*;
 import com.seifabdelaziz.tetris.Tetriminoes.*;
 import com.seifabdelaziz.tetris.Tiles.Matrix;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -35,8 +31,8 @@ public class Menu extends World {
         menuBorderPane.setMinWidth(scene.getWidth());
         menuBorderPane.setMinHeight(scene.getHeight());
 
-        Matrix matrix = new Matrix(this, (int) (scene.getHeight() / TILE_SIZE),
-                (int) (scene.getWidth() / TILE_SIZE), TILE_SIZE, 0, 0, MATRIX_TILE_IMAGE);
+        new Matrix(this, (int) (scene.getHeight() / TILE_SIZE), (int) (scene.getWidth() / TILE_SIZE),
+                TILE_SIZE, 0, 0, MATRIX_TILE_IMAGE);
 
         BorderPane titleBorderPane = new BorderPane();
         VBox titleVBox = new VBox();
@@ -104,19 +100,6 @@ public class Menu extends World {
         buttonsHBox.setAlignment(Pos.CENTER);
         menuBorderPane.setCenter(buttonsHBox);
 
-        Soundtrack soundtrack = gameManager.getSoundtrack();
-        BorderPane muteButtonPane = new BorderPane();
-        Image muteButtonImage = new Image("resources/images/musicOn.png");
-        Image unMuteButtonImage = new Image("resources/images/musicOff.png");
-        MyButton muteButton = new MyButton("", soundtrack.isMute() ? unMuteButtonImage : muteButtonImage,
-                soundtrack.isMute() ? muteButtonImage : unMuteButtonImage);
-        muteButton.setPadding(new Insets(0, 0, TILE_SIZE, TILE_SIZE));
-        muteButton.setOnMouseClicked(keyEvent -> {
-            gameManager.setMusic(soundtrack.isMute());
-        });
-        muteButtonPane.setLeft(muteButton);
-        menuBorderPane.setBottom(muteButtonPane);
-
         stackPane.getChildren().addAll(menuBorderPane);
         getChildren().add(stackPane);
     }
@@ -156,12 +139,14 @@ public class Menu extends World {
         }
 
         if (now - getPrev() > (1e6 * 500)) {
+            ArrayList<Tetrimino> tetriminosToRemove = new ArrayList<>();
             for (Tetrimino tetrimino : tetriminos) {
                 tetrimino.moveVertical(30);
                 if(tetrimino.getY() > scene.getHeight() + tetrimino.getMaxHeight()) {
-                    remove(tetrimino);
+                    tetriminosToRemove.add(tetrimino);
                 }
             }
+            getChildren().removeAll(tetriminosToRemove);
         }
     }
 }

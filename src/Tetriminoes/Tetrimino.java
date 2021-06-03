@@ -1,10 +1,12 @@
 package com.seifabdelaziz.tetris.Tetriminoes;
 
 import com.seifabdelaziz.tetris.Engine.Actor;
+import com.seifabdelaziz.tetris.Engine.GameManager;
 import com.seifabdelaziz.tetris.Tiles.*;
 import com.seifabdelaziz.tetris.Scenes.TetrisWorld;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.media.AudioClip;
 
 import java.util.ArrayList;
 
@@ -25,6 +27,11 @@ public abstract class Tetrimino extends Actor {
     private double distanceToMoveDown;
     private static final double MOVE_SENSITIVITY = 0.1;
 
+    String moveSoundPath = getClass().getClassLoader().getResource("resources/audio/rollover2.mp3").toString();
+    AudioClip moveSound = new AudioClip(moveSoundPath);
+    String rotateSoundPath = getClass().getClassLoader().getResource("resources/audio/click1.mp3").toString();
+    AudioClip rotateSound = new AudioClip(rotateSoundPath);
+
     public Tetrimino(double width, double height, int tileSize, int[][] shape, String tileImage) {
         String tetriminoImagePath = getClass().getClassLoader().getResource(tileImage).toString();
 
@@ -38,6 +45,7 @@ public abstract class Tetrimino extends Actor {
     }
 
     public void addTiles() {
+        ArrayList<TetriminoTile> tetriminoTilesToAdd = new ArrayList<>();
         for (int r = 0; r < shape.length; r++) {
             for (int c = 0; c < shape[r].length; c++) {
                 if (shape[r][c] == 1) {
@@ -47,30 +55,25 @@ public abstract class Tetrimino extends Actor {
                     tile.setX(getX() + c * tileSize);
                     tile.setY(getY() + r * tileSize);
                     tiles[r][c] = tile;
-                    getWorld().add(tile);
+                    tetriminoTilesToAdd.add(tile);
                 } else {
                     tiles[r][c] = null;
-//                    String tetriminoImagePath = getClass().getClassLoader().getResource("./resources/white-tile.png").toString();
-//                    TetriminoTile tile = new TetriminoTile(this, new Image(tetriminoImagePath));
-//                    tile.setFitHeight(tileSize);
-//                    tile.setFitWidth(tileSize);
-//                    tile.setX(getX() + c * tileSize);
-//                    tile.setY(getY() + r * tileSize);
-//                    tiles[r][c] = tile;
-//                    getWorld().add(tile);
                 }
             }
         }
+        getWorld().getChildren().addAll(tetriminoTilesToAdd);
     }
 
     public void removeTiles() {
+        ArrayList<TetriminoTile> tilesToRemove = new ArrayList<>();
         for(int r = 0; r < tiles.length; r++) {
             for(int c = 0; c < tiles[r].length; c++) {
                 if(tiles[r][c] != null) {
-                    getWorld().remove(tiles[r][c]);
+                    tilesToRemove.add(tiles[r][c]);
                 }
             }
         }
+        getWorld().getChildren().removeAll(tilesToRemove);
     }
 
     @Override
@@ -78,6 +81,7 @@ public abstract class Tetrimino extends Actor {
         if(!isMovable) return;
         TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
         Matrix matrix = tetrisWorld.getMatrix();
+        double volume = GameManager.getInstance().getSoundEffectsVolume();
 
         ArrayList<TetriminoTile> tetriminosToSide = new ArrayList<>();
         double xOfFirstTile = Integer.MAX_VALUE;
@@ -106,6 +110,8 @@ public abstract class Tetrimino extends Actor {
         if (!isTetriminoToRight && getWorld().isKeyDown(KeyCode.RIGHT) && xOfFirstTile + maxWidth < matrix.getWidth() + matrix.getX()) {
             distanceToMove = shouldMoveToNextTile ? tileSize : distanceToMove + MOVE_SENSITIVITY;
             if (distanceToMove == tileSize) {
+                moveSound.setVolume(volume);
+                moveSound.play();
                 moveHorizontal(distanceToMove);
                 distanceToMove = 0;
             }
@@ -113,6 +119,8 @@ public abstract class Tetrimino extends Actor {
         if (!isTetriminoToLeft && getWorld().isKeyDown(KeyCode.LEFT) && xOfFirstTile - tileSize >= matrix.getX()) {
             distanceToMove = shouldMoveToNextTile ? -tileSize : distanceToMove - MOVE_SENSITIVITY;
             if (distanceToMove == -tileSize) {
+                moveSound.setVolume(volume);
+                moveSound.play();
                 moveHorizontal(distanceToMove);
                 distanceToMove = 0;
             }
@@ -156,6 +164,8 @@ public abstract class Tetrimino extends Actor {
 //        }
 
         if (tetrisWorld.getShouldRotate()) {
+            rotateSound.setVolume(volume);
+            rotateSound.play();
             rotate();
             tetrisWorld.setShouldRotate(false);
         }

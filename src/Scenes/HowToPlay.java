@@ -53,8 +53,8 @@ public class HowToPlay extends World {
                 "You must prevent the tetriminos from stacking up to the top otherwise you will lose. To prevent the" +
                 " tetriminos from stacking, you must strategically place them so that they fill up each row. When one" +
                 " row is filled up, all the tiles in that row are deleted and the blocks above that row fall one block" +
-                " down.\n\nThe goal of the game is to prevent the tetriminos from stacking up for as long as possible and" +
-                " to get a new high score.");
+                " down.\n\nThe goal of the game is to prevent the tetriminos from stacking up for as long as possible to" +
+                " get a new high score.");
         howToPlayText.setFill(Color.WHITE);
         howToPlayText.setWrappingWidth(900);
         howToPlayText.setFont(new Font(22));
@@ -144,7 +144,5 @@ public class HowToPlay extends World {
     }
 
     @Override
-    public void act(long now) {
-
-    }
+    public void act(long now) { }
 }

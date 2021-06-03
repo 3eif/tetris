@@ -19,7 +19,9 @@ public class MyButton extends Label {
         setGraphic(imageView);
         setContentDisplay(ContentDisplay.CENTER);
 
+        clickSound.setVolume(GameManager.getInstance().getSoundEffectsVolume());
         setOnMousePressed(mouseEvent -> {
+            clickSound.setVolume(GameManager.getInstance().getSoundEffectsVolume());
             clickSound.play();
         });
     }
@@ -31,6 +33,7 @@ public class MyButton extends Label {
         setContentDisplay(ContentDisplay.CENTER);
 
         setOnMousePressed(mouseEvent -> {
+            clickSound.setVolume(GameManager.getInstance().getSoundEffectsVolume());
             clickSound.play();
             if(imageView.getImage() == originalImage) {
                 imageView.setImage(clickImage);
@@ -49,6 +52,7 @@ public class MyButton extends Label {
         setContentDisplay(ContentDisplay.CENTER);
 
         setOnMousePressed(mouseEvent -> {
+            clickSound.setVolume(GameManager.getInstance().getSoundEffectsVolume());
             clickSound.play();
         });
 
@@ -69,6 +73,7 @@ public class MyButton extends Label {
         setContentDisplay(ContentDisplay.CENTER);
 
         setOnMousePressed(mouseEvent -> {
+            clickSound.setVolume(GameManager.getInstance().getSoundEffectsVolume());
             clickSound.play();
             if(imageView.getImage() == originalImage) {
                 imageView.setImage(clickImage);

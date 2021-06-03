@@ -1,16 +1,19 @@
 package com.seifabdelaziz.tetris.Tiles;
 
 import com.seifabdelaziz.tetris.Engine.Actor;
+import com.seifabdelaziz.tetris.Engine.GameManager;
 import com.seifabdelaziz.tetris.Scenes.TetrisWorld;
 import com.seifabdelaziz.tetris.Tetriminoes.Tetrimino;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
-
-import java.util.ArrayList;
+import javafx.scene.media.AudioClip;
 
 public class TetriminoTile extends Tile {
-    private Tetrimino parentTetrimino;
+    private final Tetrimino parentTetrimino;
+
+    String reachBottomSoundPath = getClass().getClassLoader().getResource("resources/audio/click2.mp3").toString();
+    AudioClip reachBottom = new AudioClip(reachBottomSoundPath);
 
     public TetriminoTile(Tetrimino tetrimino, Image image) {
         super(image);
@@ -64,14 +67,21 @@ public class TetriminoTile extends Tile {
         if(getWorld() instanceof TetrisWorld) {
             TetrisWorld tetrisWorld = (TetrisWorld) getWorld();
 
+            if(getY() <= tetrisWorld.getMatrix().getY() && !getParentTetrimino().isMovable()) {
+                getWorld().setGameOver(true);
+                return;
+            }
+
             MatrixTile matrixTile = getObjectContaining(MatrixTile.class);
-            TetriminoTile tetriminoTileContaining = getObjectContaining(TetriminoTile.class);
+//            TetriminoTile tetriminoTileContaining = getObjectContaining(TetriminoTile.class);
 //        if(!parentTetrimino.isBeingHeld() && !parentTetrimino.isNext() &&
 //                tetriminoTileContaining != null && !parentTetrimino.isMovable())
 //            parentTetrimino.moveVertical(-tetrisWorld.getTileSize());
 
             TetriminoTile tetriminoTile = getOneIntersectingObject(TetriminoTile.class);
             if (tetriminoTile != null && tetriminoTile.getParentTetrimino() != parentTetrimino && parentTetrimino.isMovable()) {
+                reachBottom.setVolume(GameManager.getInstance().getSoundEffectsVolume());
+                reachBottom.play();
                 parentTetrimino.setIsMovable(false);
                 tetrisWorld.spawnTetrimino();
             }
@@ -83,9 +93,5 @@ public class TetriminoTile extends Tile {
 
     public Tetrimino getParentTetrimino() {
         return parentTetrimino;
-    }
-
-    public void setParentTetrimino(Tetrimino parentTetrimino) {
-        this.parentTetrimino = parentTetrimino;
     }
 }
