@@ -31,7 +31,7 @@ public class Tetris extends Application {
         gameManager.setApplication(this);
         Scene scene = new Scene(root, 1050, 810);
         gameManager.setGame(scene);
-        gameManager.setSoundtrack(new Soundtrack("./resources/audio/tetris.mp3")); // TODO: Make looping sound better
+        gameManager.setSoundtrack(new Soundtrack("./resources/audio/tetris.mp3"));
         gameManager.setMusicVolume(Double.parseDouble(readKey("Music",
                 String.valueOf(GameManager.defaultMusicVolume))), false);
         gameManager.setSoundEffectsVolume(Double.parseDouble(readKey("Sound Effects",
