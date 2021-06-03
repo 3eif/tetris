@@ -1,3 +1,3 @@
 Highscore: 9800
-Music: 0.03076923076923077
-Sound Effects: 0.7
+Music: 0.0030769230769230774
+Sound Effects: 1.0
